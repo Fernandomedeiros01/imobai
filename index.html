@@ -200,6 +200,35 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .gate-lgpd { font-size: 11px; color: var(--subtle); line-height: 1.6; text-align: center; }
 .gate-lgpd a { color: var(--muted); }
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+.regiao-autocomplete { position: relative; }
+.regiao-sugestoes {
+  margin-top: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(28,25,23,.06);
+}
+.sug-item {
+  padding: 11px 14px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background .15s, color .15s;
+}
+.sug-item:last-child { border-bottom: none; }
+.sug-item:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+.sug-empty {
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
 </style>
 </head>
 <body>
@@ -356,7 +385,15 @@ function renderQ() {
   let inputHtml = '';
   if (q.type === 'regiao') {
     const chips = (q.sugestoes || []).map(s => `<span class="regiao-chip ${isLoc ? 'loc' : ''}" onclick="preencherRegiao('${s.replace(/'/g, "\\'")}')">${s}</span>`).join('');
-    inputHtml = `<div class="regiao-input-wrap"><span class="regiao-icon">📍</span><input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput" placeholder="Ex: Pinheiros, Vila Mariana, ABC..." value="${escapeHtml(regiaoValue)}" oninput="onRegiaoInput(this.value)" autocomplete="off"></div><div class="regiao-chips">${chips}</div>`;
+    inputHtml = `
+      <div class="regiao-autocomplete">
+        <div class="regiao-input-wrap">
+          <span class="regiao-icon">📍</span>
+          <input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput" placeholder="Ex: Pinheiros, Vila Mariana, ABC..." value="${escapeHtml(regiaoValue)}" oninput="onRegiaoInput(this.value)" autocomplete="off">
+        </div>
+        <div id="regiaoSugestoes" class="regiao-sugestoes" style="display:none"></div>
+      </div>
+      <div class="regiao-chips">${chips}</div>`;
   } else {
     const locClass = isLoc ? ' loc-mode' : '';
     inputHtml = `<div class="opts ${q.layout === 'grid' ? 'grid' : ''}">${q.opts.map((o, i) => `<button type="button" class="opt ${sel.includes(o.l) ? 'sel' + locClass : ''}" onclick="pick(${i})"><span class="opt-icon">${o.i}</span><span class="opt-text">${escapeHtml(o.l)}${o.s ? `<div class="opt-sub">${escapeHtml(o.s)}</div>` : ''}</span></button>`).join('')}</div>`;
@@ -569,6 +606,14 @@ function montarWhatsappConsultor(im) {
 }
 function escapeHtml(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
 function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('screen-' + id).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+document.addEventListener('click', function(e) {
+  const box = document.getElementById('regiaoSugestoes');
+  const input = document.getElementById('regiaoInput');
+  if (!box || !input) return;
+  if (e.target === input || box.contains(e.target)) return;
+  box.style.display = 'none';
+});
 </script>
 </body>
 </html>
