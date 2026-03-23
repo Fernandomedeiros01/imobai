@@ -322,7 +322,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <span style="font-size:12px;color:var(--muted);line-height:1.6;">Autorizo o ImobAI a armazenar meus dados e compartilhá-los com corretores parceiros para contato sobre imóveis compatíveis com meu perfil, conforme a <a href="/privacidade.html" style="color:var(--accent);">Política de Privacidade</a> e a Lei Geral de Proteção de Dados (LGPD).</span>
       </label>
       <button class="btn-gate" onclick="liberarResultados()">Ver meus imóveis →</button>
-      <p class="gate-lgpd">Dúvidas ou exclusão de dados: <a href="mailto:fernando.cmedeiros@hotmail.com">fernando.cmedeiros@hotmail.com</a></p>
+      <p class="gate-lgpd">Dúvidas ou exclusão de dados: <a href="/cdn-cgi/l/email-protection#0b6d6e79656a656f642568666e6f6e627964784b63647f666a626725686466"><span class="__cf_email__" data-cfemail="107675627e717e747f3e737d75747579627f6350787f647d71797c3e737f7d">[email&#160;protected]</span></a></p>
     </div>
   </div>
 </div>
@@ -338,7 +338,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <div class="results-footer"><p>Resultados gerados por IA com base no seu perfil.<br>Use os botões para pesquisar opções parecidas ou falar com um especialista.</p></div>
   </div>
 </div>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const Q_COMPRA = [
   { pilar:"Região", title:"Onde você quer comprar?", hint:"Digite o bairro ou região, ou escolha uma sugestão abaixo.", type:"regiao", sugestoes:["Pinheiros","Vila Mariana","Moema","Santana","Santo André","Campinas"] },
   { pilar:"Perfil", title:"Com quem você vai morar?", hint:"Define o tamanho ideal e as áreas prioritárias do imóvel.", type:"single", layout:"grid", opts:[{i:"🧍",l:"Sozinho",s:""},{i:"👫",l:"Casal",s:"Sem filhos"},{i:"👨‍👩‍👧",l:"Família",s:"Com filhos"},{i:"🤝",l:"Roommates",s:"Moradia compartilhada"}] },
@@ -433,6 +433,136 @@ function preencherRegiao(val) {
   if (btn) btn.classList.add('on');
   esconderRegiaoAutocomplete();
 }
+const REGIOES_AUTOCOMPLETE = [
+  // Zona Oeste
+  {nome:"Pinheiros",detalhe:"Zona Oeste · SP"},
+  {nome:"Vila Madalena",detalhe:"Zona Oeste · SP"},
+  {nome:"Lapa",detalhe:"Zona Oeste · SP"},
+  {nome:"Alto de Pinheiros",detalhe:"Zona Oeste · SP"},
+  {nome:"Perdizes",detalhe:"Zona Oeste · SP"},
+  {nome:"Sumaré",detalhe:"Zona Oeste · SP"},
+  {nome:"Pompéia",detalhe:"Zona Oeste · SP"},
+  {nome:"Água Branca",detalhe:"Zona Oeste · SP"},
+  {nome:"Butantã",detalhe:"Zona Oeste · SP"},
+  {nome:"Morumbi",detalhe:"Zona Oeste · SP"},
+  {nome:"Jardim América",detalhe:"Zona Oeste · SP"},
+  {nome:"Jardim Europa",detalhe:"Zona Oeste · SP"},
+  {nome:"Jardim Paulistano",detalhe:"Zona Oeste · SP"},
+  {nome:"Jardim Paulista",detalhe:"Zona Oeste · SP"},
+  {nome:"Cerqueira César",detalhe:"Zona Oeste · SP"},
+  {nome:"Itaim Bibi",detalhe:"Zona Oeste · SP"},
+  // Zona Sul
+  {nome:"Vila Mariana",detalhe:"Zona Sul · SP"},
+  {nome:"Moema",detalhe:"Zona Sul · SP"},
+  {nome:"Brooklin",detalhe:"Zona Sul · SP"},
+  {nome:"Campo Belo",detalhe:"Zona Sul · SP"},
+  {nome:"Santo Amaro",detalhe:"Zona Sul · SP"},
+  {nome:"Jabaquara",detalhe:"Zona Sul · SP"},
+  {nome:"Saúde",detalhe:"Zona Sul · SP"},
+  {nome:"Ipiranga",detalhe:"Zona Sul · SP"},
+  {nome:"Vila Prudente",detalhe:"Zona Sul · SP"},
+  {nome:"Cursino",detalhe:"Zona Sul · SP"},
+  {nome:"Mirandópolis",detalhe:"Zona Sul · SP"},
+  {nome:"Aclimação",detalhe:"Zona Sul · SP"},
+  {nome:"Paraíso",detalhe:"Zona Sul · SP"},
+  {nome:"Liberdade",detalhe:"Zona Sul · SP"},
+  {nome:"Bela Vista",detalhe:"Zona Sul · SP"},
+  {nome:"Chácara Klabin",detalhe:"Zona Sul · SP"},
+  {nome:"Vila Olímpia",detalhe:"Zona Sul · SP"},
+  {nome:"Planalto Paulista",detalhe:"Zona Sul · SP"},
+  {nome:"Campo Grande",detalhe:"Zona Sul · SP"},
+  {nome:"Interlagos",detalhe:"Zona Sul · SP"},
+  {nome:"Socorro",detalhe:"Zona Sul · SP"},
+  {nome:"Pedreira",detalhe:"Zona Sul · SP"},
+  {nome:"Cidade Dutra",detalhe:"Zona Sul · SP"},
+  // Zona Norte
+  {nome:"Santana",detalhe:"Zona Norte · SP"},
+  {nome:"Tucuruvi",detalhe:"Zona Norte · SP"},
+  {nome:"Mandaqui",detalhe:"Zona Norte · SP"},
+  {nome:"Vila Guilherme",detalhe:"Zona Norte · SP"},
+  {nome:"Vila Maria",detalhe:"Zona Norte · SP"},
+  {nome:"Casa Verde",detalhe:"Zona Norte · SP"},
+  {nome:"Limão",detalhe:"Zona Norte · SP"},
+  {nome:"Tremembé",detalhe:"Zona Norte · SP"},
+  {nome:"Jaçanã",detalhe:"Zona Norte · SP"},
+  {nome:"Jaraguá",detalhe:"Zona Norte · SP"},
+  {nome:"Perus",detalhe:"Zona Norte · SP"},
+  {nome:"Pirituba",detalhe:"Zona Norte · SP"},
+  // Zona Leste
+  {nome:"Tatuapé",detalhe:"Zona Leste · SP"},
+  {nome:"Mooca",detalhe:"Zona Leste · SP"},
+  {nome:"Belém",detalhe:"Zona Leste · SP"},
+  {nome:"Brás",detalhe:"Zona Leste · SP"},
+  {nome:"Pari",detalhe:"Zona Leste · SP"},
+  {nome:"Carrão",detalhe:"Zona Leste · SP"},
+  {nome:"Vila Formosa",detalhe:"Zona Leste · SP"},
+  {nome:"Penha",detalhe:"Zona Leste · SP"},
+  {nome:"Vila Matilde",detalhe:"Zona Leste · SP"},
+  {nome:"Aricanduva",detalhe:"Zona Leste · SP"},
+  {nome:"Vila Prudente",detalhe:"Zona Leste · SP"},
+  {nome:"São Mateus",detalhe:"Zona Leste · SP"},
+  {nome:"Itaquera",detalhe:"Zona Leste · SP"},
+  {nome:"Guaianases",detalhe:"Zona Leste · SP"},
+  {nome:"Cidade Tiradentes",detalhe:"Zona Leste · SP"},
+  {nome:"Ermelino Matarazzo",detalhe:"Zona Leste · SP"},
+  {nome:"São Miguel Paulista",detalhe:"Zona Leste · SP"},
+  {nome:"Itaim Paulista",detalhe:"Zona Leste · SP"},
+  {nome:"Vila Curuçá",detalhe:"Zona Leste · SP"},
+  // Centro
+  {nome:"Centro",detalhe:"Centro · SP"},
+  {nome:"República",detalhe:"Centro · SP"},
+  {nome:"Consolação",detalhe:"Centro · SP"},
+  {nome:"Santa Cecília",detalhe:"Centro · SP"},
+  {nome:"Higienópolis",detalhe:"Centro · SP"},
+  {nome:"Campos Elíseos",detalhe:"Centro · SP"},
+  {nome:"Bom Retiro",detalhe:"Centro · SP"},
+  {nome:"Luz",detalhe:"Centro · SP"},
+  {nome:"Sé",detalhe:"Centro · SP"},
+  // Grande SP
+  {nome:"Santo André",detalhe:"Grande SP · ABC"},
+  {nome:"São Bernardo do Campo",detalhe:"Grande SP · ABC"},
+  {nome:"São Caetano do Sul",detalhe:"Grande SP · ABC"},
+  {nome:"Diadema",detalhe:"Grande SP · ABC"},
+  {nome:"Mauá",detalhe:"Grande SP · ABC"},
+  {nome:"Guarulhos",detalhe:"Grande SP"},
+  {nome:"Osasco",detalhe:"Grande SP"},
+  {nome:"Barueri",detalhe:"Grande SP"},
+  {nome:"Santana de Parnaíba",detalhe:"Grande SP"},
+  {nome:"Alphaville",detalhe:"Barueri · Grande SP"},
+  {nome:"Cotia",detalhe:"Grande SP"},
+  {nome:"Embu das Artes",detalhe:"Grande SP"},
+  {nome:"Taboão da Serra",detalhe:"Grande SP"},
+  {nome:"Mogi das Cruzes",detalhe:"Grande SP"},
+  {nome:"Suzano",detalhe:"Grande SP"},
+  // Interior SP
+  {nome:"Campinas",detalhe:"Interior · SP"},
+  {nome:"Sorocaba",detalhe:"Interior · SP"},
+  {nome:"São José dos Campos",detalhe:"Interior · SP"},
+  {nome:"Ribeirão Preto",detalhe:"Interior · SP"},
+  {nome:"Santos",detalhe:"Litoral · SP"},
+  {nome:"São Vicente",detalhe:"Litoral · SP"},
+  {nome:"Guarujá",detalhe:"Litoral · SP"},
+  {nome:"Praia Grande",detalhe:"Litoral · SP"},
+  // Vilas populares
+  {nome:"Vila Andrade",detalhe:"Zona Sul · SP"},
+  {nome:"Vila Sônia",detalhe:"Zona Oeste · SP"},
+  {nome:"Vila Leopoldina",detalhe:"Zona Oeste · SP"},
+  {nome:"Vila Romana",detalhe:"Zona Oeste · SP"},
+  {nome:"Vila Hamburguesa",detalhe:"Zona Oeste · SP"},
+  {nome:"Vila Clementino",detalhe:"Zona Sul · SP"},
+  {nome:"Vila Santa Catarina",detalhe:"Zona Sul · SP"},
+  {nome:"Vila Mascote",detalhe:"Zona Sul · SP"},
+  {nome:"Vila Congonhas",detalhe:"Zona Sul · SP"},
+  {nome:"Vila Gomes Cardim",detalhe:"Zona Leste · SP"},
+  {nome:"Vila Carrão",detalhe:"Zona Leste · SP"},
+  {nome:"Vila Esperança",detalhe:"Zona Leste · SP"},
+  {nome:"Vila Natal",detalhe:"Zona Leste · SP"},
+  {nome:"Vila Guilherme",detalhe:"Zona Norte · SP"},
+  {nome:"Vila Medeiros",detalhe:"Zona Norte · SP"},
+  {nome:"Vila Gustavo",detalhe:"Zona Norte · SP"},
+  {nome:"Vila Nova Cachoeirinha",detalhe:"Zona Norte · SP"},
+];
+
 function normalizarBuscaRegiao(text) {
   return String(text || '')
     .normalize('NFD')
@@ -625,12 +755,3 @@ function escapeHtml(str) { return String(str ?? '').replace(/&/g, '&amp;').repla
 function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('screen-' + id).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
 document.addEventListener('click', function(e) {
-  const box = document.getElementById('regiaoSugestoes');
-  const input = document.getElementById('regiaoInput');
-  if (!box || !input) return;
-  if (e.target === input || box.contains(e.target)) return;
-  box.style.display = 'none';
-});
-</script>
-</body>
-</html>
