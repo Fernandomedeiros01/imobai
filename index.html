@@ -661,14 +661,13 @@ Retorne SOMENTE este JSON, sem markdown:
 }`;
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    // Chama o backend seguro — a API Key nunca aparece aqui
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1200,
         system,
-        messages: [{ role: "user", content: "Busque os 3 melhores imóveis para este perfil." }]
+        userMessage: "Busque os 3 melhores imóveis para este perfil."
       })
     });
 
