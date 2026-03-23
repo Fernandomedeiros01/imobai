@@ -908,14 +908,6 @@ function renderError() {
 function montarLinkZap() {
   const p = userProfile;
   const isLoc = objetivo === 'locacao';
-  const tipo = isLoc ? 'aluguel' : 'venda';
-
-  // Converte região para slug: remove acentos, minúsculas, espaços viram hifens
-  const slug = (p.regiao || 'sao-paulo')
-    .toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '');
 
   // Quartos baseado na composição
   let quartos = 1;
@@ -937,13 +929,13 @@ function montarLinkZap() {
     else precoMax = '3000000';
   }
 
-  // Tipo de imóvel
-  const tipoImovel = p.composicao === 'Sozinho' ? 'apartamentos' : 'imoveis';
+  // Monta busca pelo campo de texto do Zap — funciona para qualquer bairro
+  const regiao = encodeURIComponent((p.regiao || 'São Paulo') + ', São Paulo');
+  const transacao = isLoc ? 'aluguel' : 'compra';
+  const filtroQuartos = quartos > 0 ? `&quartos=${quartos}` : '';
+  const filtroPreco = precoMax ? `&precoMaximo=${precoMax}` : '';
 
-  let url = `https://www.zapimoveis.com.br/${tipo}/${tipoImovel}/sp+sao-paulo+${slug}/?quartos=${quartos}`;
-  if (precoMax) url += `&precoMaximo=${precoMax}`;
-
-  return url;
+  return `https://www.zapimoveis.com.br/resultado/?transacao=${transacao}&onde=${regiao}&estadoId=SP&cidadeId=9142${filtroQuartos}${filtroPreco}`;
 }
 
 function show(id) {
