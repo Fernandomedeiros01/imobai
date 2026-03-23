@@ -367,15 +367,30 @@ const Q_LOCACAO = [
 let objetivo = null, Qs = [], cur = 0, ans = [], userProfile = {}, regiaoValue = '', resultadoIA = null;
 function selecionarObjetivo(obj) {
   objetivo = obj;
-  document.getElementById('btnCompra').classList.toggle('sel', obj === 'compra');
-  document.getElementById('btnLocacao').classList.toggle('sel', obj === 'locacao');
+
+  const btnC = document.getElementById('btnCompra');
+  const btnL = document.getElementById('btnLocacao');
+
+  // Reset ambos
+  btnC.style.cssText = 'border: 2px solid #E5E0D8; background: #fff;';
+  btnL.style.cssText = 'border: 2px solid #E5E0D8; background: #fff;';
+  btnC.querySelector('.obj-label').style.cssText = '';
+  btnL.querySelector('.obj-label').style.cssText = '';
+
+  // Destaca o selecionado com estilo inline — nada sobrescreve
+  if (obj === 'compra') {
+    btnC.style.cssText = 'border: 3px solid #C2541A !important; background: #FDF0E8 !important;';
+    btnC.querySelector('.obj-label').style.cssText = 'color: #C2541A; font-weight: 700;';
+  } else {
+    btnL.style.cssText = 'border: 3px solid #1D4ED8 !important; background: #EFF6FF !important;';
+    btnL.querySelector('.obj-label').style.cssText = 'color: #1D4ED8; font-weight: 700;';
+  }
+
+  // Ativa botão começar
   const btn = document.getElementById('btnIniciar');
-  btn.classList.add('on');
-  btn.classList.toggle('locacao-mode', obj === 'locacao');
-  btn.style.opacity = '1';
-  btn.style.pointerEvents = 'all';
-  btn.style.cursor = 'pointer';
+  btn.style.cssText = 'opacity: 1; pointer-events: all; cursor: pointer;';
   btn.onclick = function() { startQuiz(); };
+
   Qs = obj === 'compra' ? Q_COMPRA : Q_LOCACAO;
   document.getElementById('statPergs').textContent = Qs.length;
 }
