@@ -921,32 +921,87 @@ function renderError() {
 // ════════════════════════════════════════════
 // ZAP LINK
 // ════════════════════════════════════════════
-function slugifyZap(text) {
+<script>
+function normalizarTextoZap(text) {
   return (text || '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '');
+    .trim();
+}
+
+function detectarTipoZap(im) {
+  const titulo = normalizarTextoZap(im?.titulo || '');
+
+  if (titulo.includes('apartamento')) return 'apartamentos';
+  if (titulo.includes('casa')) return 'casas';
+  if (titulo.includes('sobrado')) return 'sobrados';
+  if (titulo.includes('studio')) return 'apartamentos';
+  if (titulo.includes('flat')) return 'apartamentos';
+
+  return 'imoveis';
+}
+
+function montarLocalizacaoZap(regiao) {
+  const r = normalizarTextoZap(regiao);
+
+  // mapa inicial dos bairros/regiões que você mais quer usar no MVP
+  const mapa = {
+    'jaragua': 'sp%2Bsao-paulo%2Bzona-norte%2Bjaragua',
+    'jaraguá': 'sp%2Bsao-paulo%2Bzona-norte%2Bjaragua',
+    'city jaragua': 'sp%2Bsao-paulo%2Bzona-norte%2Bcity-jaragua',
+    'city jaraguá': 'sp%2Bsao-paulo%2Bzona-norte%2Bcity-jaragua',
+    'pinheiros': 'sp%2Bsao-paulo%2Bzona-oeste%2Bpinheiros',
+    'moema': 'sp%2Bsao-paulo%2Bzona-sul%2Bmoema',
+    'vila mariana': 'sp%2Bsao-paulo%2Bzona-sul%2Bvila-mariana',
+    'santana': 'sp%2Bsao-paulo%2Bzona-norte%2Bsantana',
+    'tatuape': 'sp%2Bsao-paulo%2Bzona-leste%2Btatuape',
+    'tatuapé': 'sp%2Bsao-paulo%2Bzona-leste%2Btatuape',
+    'lapa': 'sp%2Bsao-paulo%2Bzona-oeste%2Blapa',
+    'brooklin': 'sp%2Bsao-paulo%2Bzona-sul%2Bbrooklin',
+    'vila madalena': 'sp%2Bsao-paulo%2Bzona-oeste%2Bvila-madalena'
+  };
+
+  if (mapa[r]) return mapa[r];
+
+  // fallback seguro: abre São Paulo inteiro, sem quebrar
+  return 'sp%2Bsao-paulo';
+}
+
+function montarFiltrosZap(im) {
+  const titulo = normalizarTextoZap(im?.titulo || '');
+  const preco = String(im?.preco || '');
+
+  const quartosMatch = titulo.match(/(\d+)\s*quartos?/i) || preco.match(/(\d+)\s*quartos?/i);
+  const quartos = quartosMatch ? quartosMatch[1] : '';
+
+  const precoNumerico = preco.replace(/\D/g, '');
+
+  const params = new URLSearchParams();
+
+  if (quartos) params.set('quartos', quartos);
+
+  if (precoNumerico) {
+    if (objetivo === 'locacao') {
+      params.set('precoMaximo', precoNumerico);
+    } else {
+      params.set('precoMaximo', precoNumerico);
+    }
+  }
+
+  const qs = params.toString();
+  return qs ? `?${qs}` : '';
 }
 
 function montarLinkZap(im) {
-  const isLoc = objetivo === 'locacao';
-  const transacao = isLoc ? 'aluguel' : 'venda';
+  const transacao = objetivo === 'locacao' ? 'aluguel' : 'venda';
+  const tipo = detectarTipoZap(im);
+  const localizacao = montarLocalizacaoZap(userProfile.regiao || 'São Paulo');
+  const filtros = montarFiltrosZap(im);
 
-  const titulo = (im?.titulo || '').toLowerCase();
-  let tipo = 'imoveis';
-
-  if (titulo.includes('apartamento')) tipo = 'apartamentos';
-  else if (titulo.includes('casa')) tipo = 'casas';
-  else if (titulo.includes('sobrado')) tipo = 'sobrados';
-  else if (titulo.includes('studio')) tipo = 'apartamentos';
-  else if (titulo.includes('flat')) tipo = 'apartamentos';
-
-  const bairro = slugifyZap(userProfile.regiao || 'sao-paulo');
-
-  return `https://www.zapimoveis.com.br/${transacao}/${tipo}/sp+sao-paulo+${bairro}/`;
+  return `https://www.zapimoveis.com.br/${transacao}/${tipo}/${localizacao}/${filtros}`;
+}
+</script>
 }
 
 // ════════════════════════════════════════════
