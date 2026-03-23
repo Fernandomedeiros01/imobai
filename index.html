@@ -39,16 +39,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   cursor: pointer; font-family: 'DM Sans', sans-serif;
   transition: all .2s;
 }
-.obj-btn:hover { border-color: var(--accent-mid); background: var(--accent-light); }
-.obj-btn.compra.sel { border-color: var(--accent) !important; background: var(--accent-light) !important; border-width: 3px !important; }
-.obj-btn.locacao.sel { border-color: var(--blue) !important; background: var(--blue-light) !important; border-width: 3px !important; }
-.obj-btn.compra:hover { border-color: var(--accent); background: var(--accent-light); }
-.obj-btn.locacao:hover { border-color: var(--blue); background: var(--blue-light); }
+.obj-btn:not(.sel):hover { border-color: var(--accent-mid); background: var(--accent-light); }
+.obj-btn.compra.sel,
+.obj-btn.compra.sel:hover { border-color: var(--accent) !important; background: var(--accent-light) !important; border-width: 3px !important; }
+.obj-btn.locacao.sel,
+.obj-btn.locacao.sel:hover { border-color: var(--blue) !important; background: var(--blue-light) !important; border-width: 3px !important; }
 .obj-icon { font-size: 28px; }
 .obj-label { font-size: 15px; font-weight: 500; color: var(--text); }
 .obj-sub { font-size: 11px; color: var(--muted); }
-.obj-btn.compra.sel .obj-label { color: var(--accent) !important; font-weight: 700 !important; }
-.obj-btn.locacao.sel .obj-label { color: var(--blue) !important; font-weight: 700 !important; }
+.obj-btn.compra.sel .obj-label,
+.obj-btn.compra.sel:hover .obj-label { color: var(--accent) !important; font-weight: 700 !important; }
+.obj-btn.locacao.sel .obj-label,
+.obj-btn.locacao.sel:hover .obj-label { color: var(--blue) !important; font-weight: 700 !important; }
 .hero-stats { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
 .stat { text-align: center; }
 .stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--text); }
