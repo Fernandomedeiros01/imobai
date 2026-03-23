@@ -666,10 +666,17 @@ Retorne SOMENTE este JSON, sem markdown:
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        system,
-        userMessage: "Busque os 3 melhores imóveis para este perfil."
+      system,
+        userMessage: "Busque os 3 melhores imóveis para este perfil.",
+        lead: {
+          objetivo: userProfile.objetivo,
+          regiao: userProfile.regiao,
+          composicao: userProfile.composicao,
+          orcamento: userProfile.orcamento,
+          must_haves: userProfile.must_haves,
+          prioridade: userProfile.prioridade
+        }
       })
-    });
 
     const data = await res.json();
     const raw = data.content?.[0]?.text || '';
