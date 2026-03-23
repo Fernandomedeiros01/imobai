@@ -705,13 +705,6 @@ ${extraCompra}${extraLocacao}
 CRITÉRIOS DE SCORING: ${p.criterios}
 
 INSTRUÇÕES:
-- Para cada imóvel, monte um link_zap real do Zap Imóveis com os critérios do perfil:
-  * Use /venda/ para compra e /aluguel/ para locação
-  * Converta o bairro para slug em minúsculas sem acentos (Vila Mariana = vila-mariana)
-  * Adicione filtros de preço baseados no orçamento informado
-  * Adicione filtros de quartos baseados na composição familiar
-  * Exemplo compra família 3 quartos Vila Mariana até 600k: https://www.zapimoveis.com.br/venda/apartamentos/sp+sao-paulo+vila-mariana/?quartos=3&priceMax=600000
-  * Exemplo aluguel sozinho Pinheiros até 4000: https://www.zapimoveis.com.br/aluguel/apartamentos/sp+sao-paulo+pinheiros/?priceMax=4000
 - Crie imóveis EXCLUSIVAMENTE na região: ${p.regiao} ou arredores próximos
 - Score de 0-100 baseado nos critérios ponderados
 - Tags match: atributos que batem com o perfil (máx 3)
@@ -731,8 +724,7 @@ Retorne SOMENTE este JSON, sem markdown:
       "score": 94,
       "tags_match": ["match1","match2"],
       "tags_neutro": ["2 quartos","65m²","reformado"],
-      "justificativa": "Justificativa personalizada. <strong>Destaque</strong> o ponto mais relevante.",
-      "link_zap": "URL do Zap Imóveis montada com os critérios: tipo (venda ou aluguel), bairro em slug (ex: vila-mariana), faixa de preço. Formato: https://www.zapimoveis.com.br/[venda ou aluguel]/[tipo-imovel]/sp+sao-paulo+[bairro-slug]/?priceMin=X&priceMax=Y&bedrooms=Z"
+      "justificativa": "Justificativa personalizada. <strong>Destaque</strong> o ponto mais relevante."
     }
   ],
   "nota": "Uma frase do agente sobre a busca na região"
@@ -888,8 +880,7 @@ function liberarResultados() {
         <span class="itag price">${im.preco}</span>
       </div>
       <div class="imovel-justif">${im.justificativa}</div>
-      ${im.link_zap ? `
-      <a href="${im.link_zap}" target="_blank" rel="noopener" style="
+      <a href="${montarLinkZap()}" target="_blank" rel="noopener" style="
         display:inline-flex;align-items:center;gap:6px;
         margin-top:12px;padding:9px 16px;
         background:#EF4923;color:#fff;
@@ -897,7 +888,7 @@ function liberarResultados() {
         text-decoration:none;transition:opacity .2s;
       " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
         Buscar imóveis similares no Zap →
-      </a>` : ''}
+      </a>
     </div>`).join('');
 
   show('results');
@@ -912,6 +903,47 @@ function renderError() {
       <button class="btn-retry" onclick="buildProfileAndSearch()">Tentar novamente</button>
     </div>`;
   show('results');
+}
+
+function montarLinkZap() {
+  const p = userProfile;
+  const isLoc = objetivo === 'locacao';
+  const tipo = isLoc ? 'aluguel' : 'venda';
+
+  // Converte região para slug: remove acentos, minúsculas, espaços viram hifens
+  const slug = (p.regiao || 'sao-paulo')
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+
+  // Quartos baseado na composição
+  let quartos = 1;
+  if (p.composicao === 'Casal') quartos = 2;
+  if (p.composicao === 'Família') quartos = 3;
+  if (p.composicao === 'Roommates') quartos = 2;
+
+  // Preço máximo baseado no orçamento
+  let precoMax = '';
+  if (isLoc) {
+    if (p.orcamento && p.orcamento.includes('2.000')) precoMax = '2000';
+    else if (p.orcamento && p.orcamento.includes('4.000')) precoMax = '4000';
+    else if (p.orcamento && p.orcamento.includes('7.000')) precoMax = '7000';
+    else precoMax = '15000';
+  } else {
+    if (p.orcamento && p.orcamento.includes('300')) precoMax = '300000';
+    else if (p.orcamento && p.orcamento.includes('600')) precoMax = '600000';
+    else if (p.orcamento && p.orcamento.includes('1 mi')) precoMax = '1000000';
+    else precoMax = '3000000';
+  }
+
+  // Tipo de imóvel
+  const tipoImovel = p.composicao === 'Sozinho' ? 'apartamentos' : 'imoveis';
+
+  let url = `https://www.zapimoveis.com.br/${tipo}/${tipoImovel}/sp+sao-paulo+${slug}/?quartos=${quartos}`;
+  if (precoMax) url += `&precoMaximo=${precoMax}`;
+
+  return url;
 }
 
 function show(id) {
