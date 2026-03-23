@@ -435,7 +435,7 @@ function obterSugestoesRegiao(termo) {
   }).slice(0, 5);
 }
 function renderRegiaoAutocomplete() {
-  const box = document.getElementById('regiaoAutocomplete');
+  const box = document.getElementById('regiaoSugestoes');
   if (!box) return;
 
   const sugestoes = obterSugestoesRegiao(regiaoValue);
@@ -458,7 +458,7 @@ function renderRegiaoAutocomplete() {
   box.classList.add('show');
 }
 function esconderRegiaoAutocomplete() {
-  const box = document.getElementById('regiaoAutocomplete');
+  const box = document.getElementById('regiaoSugestoes');
   if (!box) return;
   setTimeout(() => {
     box.classList.remove('show');
