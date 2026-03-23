@@ -27,7 +27,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Salva o lead no Supabase
     if (lead && supabaseUrl && supabaseKey) {
       await fetch(`${supabaseUrl}/rest/v1/leads`, {
         method: 'POST',
