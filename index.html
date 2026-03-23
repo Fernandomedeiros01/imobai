@@ -705,6 +705,13 @@ ${extraCompra}${extraLocacao}
 CRITÉRIOS DE SCORING: ${p.criterios}
 
 INSTRUÇÕES:
+- Para cada imóvel, monte um link_zap real do Zap Imóveis com os critérios do perfil:
+  * Use /venda/ para compra e /aluguel/ para locação
+  * Converta o bairro para slug em minúsculas sem acentos (Vila Mariana = vila-mariana)
+  * Adicione filtros de preço baseados no orçamento informado
+  * Adicione filtros de quartos baseados na composição familiar
+  * Exemplo compra família 3 quartos Vila Mariana até 600k: https://www.zapimoveis.com.br/venda/apartamentos/sp+sao-paulo+vila-mariana/?quartos=3&priceMax=600000
+  * Exemplo aluguel sozinho Pinheiros até 4000: https://www.zapimoveis.com.br/aluguel/apartamentos/sp+sao-paulo+pinheiros/?priceMax=4000
 - Crie imóveis EXCLUSIVAMENTE na região: ${p.regiao} ou arredores próximos
 - Score de 0-100 baseado nos critérios ponderados
 - Tags match: atributos que batem com o perfil (máx 3)
@@ -724,7 +731,8 @@ Retorne SOMENTE este JSON, sem markdown:
       "score": 94,
       "tags_match": ["match1","match2"],
       "tags_neutro": ["2 quartos","65m²","reformado"],
-      "justificativa": "Justificativa personalizada. <strong>Destaque</strong> o ponto mais relevante."
+      "justificativa": "Justificativa personalizada. <strong>Destaque</strong> o ponto mais relevante.",
+      "link_zap": "URL do Zap Imóveis montada com os critérios: tipo (venda ou aluguel), bairro em slug (ex: vila-mariana), faixa de preço. Formato: https://www.zapimoveis.com.br/[venda ou aluguel]/[tipo-imovel]/sp+sao-paulo+[bairro-slug]/?priceMin=X&priceMax=Y&bedrooms=Z"
     }
   ],
   "nota": "Uma frase do agente sobre a busca na região"
@@ -880,6 +888,16 @@ function liberarResultados() {
         <span class="itag price">${im.preco}</span>
       </div>
       <div class="imovel-justif">${im.justificativa}</div>
+      ${im.link_zap ? `
+      <a href="${im.link_zap}" target="_blank" rel="noopener" style="
+        display:inline-flex;align-items:center;gap:6px;
+        margin-top:12px;padding:9px 16px;
+        background:#EF4923;color:#fff;
+        border-radius:8px;font-size:13px;font-weight:500;
+        text-decoration:none;transition:opacity .2s;
+      " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+        Buscar imóveis similares no Zap →
+      </a>` : ''}
     </div>`).join('');
 
   show('results');
