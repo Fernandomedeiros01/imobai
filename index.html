@@ -40,13 +40,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   transition: all .2s;
 }
 .obj-btn:hover { border-color: var(--accent-mid); background: var(--accent-light); }
-.obj-btn.compra:hover, .obj-btn.compra.sel { border-color: var(--accent); background: var(--accent-light); }
-.obj-btn.locacao:hover, .obj-btn.locacao.sel { border-color: var(--blue); background: var(--blue-light); }
+.obj-btn.compra.sel { border-color: var(--accent) !important; background: var(--accent-light) !important; border-width: 3px !important; }
+.obj-btn.locacao.sel { border-color: var(--blue) !important; background: var(--blue-light) !important; border-width: 3px !important; }
+.obj-btn.compra:hover { border-color: var(--accent); background: var(--accent-light); }
+.obj-btn.locacao:hover { border-color: var(--blue); background: var(--blue-light); }
 .obj-icon { font-size: 28px; }
 .obj-label { font-size: 15px; font-weight: 500; color: var(--text); }
 .obj-sub { font-size: 11px; color: var(--muted); }
-.obj-btn.compra.sel .obj-label { color: var(--accent); }
-.obj-btn.locacao.sel .obj-label { color: var(--blue); }
+.obj-btn.compra.sel .obj-label { color: var(--accent) !important; font-weight: 700 !important; }
+.obj-btn.locacao.sel .obj-label { color: var(--blue) !important; font-weight: 700 !important; }
 .hero-stats { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
 .stat { text-align: center; }
 .stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--text); }
@@ -338,7 +340,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <div class="results-footer"><p>Resultados gerados por IA com base no seu perfil.<br>Use os botões para pesquisar opções parecidas ou falar com um especialista.</p></div>
   </div>
 </div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const Q_COMPRA = [
   { pilar:"Região", title:"Onde você quer comprar?", hint:"Digite o bairro ou região, ou escolha uma sugestão abaixo.", type:"regiao", sugestoes:["Pinheiros","Vila Mariana","Moema","Santana","Santo André","Campinas"] },
   { pilar:"Perfil", title:"Com quem você vai morar?", hint:"Define o tamanho ideal e as áreas prioritárias do imóvel.", type:"single", layout:"grid", opts:[{i:"🧍",l:"Sozinho",s:""},{i:"👫",l:"Casal",s:"Sem filhos"},{i:"👨‍👩‍👧",l:"Família",s:"Com filhos"},{i:"🤝",l:"Roommates",s:"Moradia compartilhada"}] },
