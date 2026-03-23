@@ -183,6 +183,29 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .error-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
 .btn-retry { margin-top: 1rem; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── LEAD GATE ── */
+#screen-gate { align-items: center; justify-content: center; padding: 2rem 1rem; }
+.gate-wrap { width: 100%; max-width: 480px; margin: 0 auto; }
+.gate-preview { background: var(--accent); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem; animation: fadeUp .4s ease both; }
+.gate-preview h3 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+.gate-preview p { font-size: 13px; color: rgba(255,255,255,.8); margin-bottom: 10px; }
+.gate-preview.locacao { background: var(--blue); }
+.gate-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.gate-tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 99px; background: rgba(255,255,255,.2); color: #fff; }
+.gate-imoveis-preview { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; animation: fadeUp .4s .1s ease both; }
+.gate-imovel-blur { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; position: relative; overflow: hidden; }
+.gate-imovel-blur::after { content: ''; position: absolute; inset: 0; backdrop-filter: blur(6px); background: rgba(244,241,235,.7); border-radius: 12px; }
+.gate-imovel-real { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+.gate-lock { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 2rem; animation: fadeUp .4s .2s ease both; }
+.gate-lock h2 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; margin-bottom: 6px; }
+.gate-lock p { font-size: 13px; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.6; }
+.gate-input { width: 100%; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--card); outline: none; margin-bottom: 10px; transition: border-color .15s; }
+.gate-input:focus { border-color: var(--accent); }
+.btn-gate { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--accent); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background .2s; margin-bottom: 12px; }
+.btn-gate:hover { background: var(--accent-hover); }
+.gate-lgpd { font-size: 11px; color: var(--subtle); line-height: 1.6; text-align: center; }
+.gate-lgpd a { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -255,6 +278,49 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 </div>
 
 <!-- ══ RESULTS ══ -->
+<!-- ══ LEAD GATE ══ -->
+<div class="screen" id="screen-gate">
+  <div class="gate-wrap">
+    <div class="gate-preview" id="gatePreview">
+      <h3 id="gatePerfilLabel">Seu perfil está pronto</h3>
+      <p id="gateNota">A IA encontrou imóveis compatíveis com você</p>
+      <div class="gate-tags" id="gateTags"></div>
+    </div>
+    <div class="gate-imoveis-preview">
+      <div class="gate-imovel-real">
+        <div class="gate-rank">#1</div>
+        <div class="gate-title" id="gateImovel1Title">Carregando...</div>
+        <div class="gate-addr" id="gateImovel1Addr"></div>
+      </div>
+      <div class="gate-imovel-blur">
+        <div class="gate-rank">#2</div>
+        <div class="gate-title">Imóvel compatível encontrado</div>
+        <div class="gate-addr">📍 Região de interesse</div>
+      </div>
+      <div class="gate-imovel-blur">
+        <div class="gate-rank">#3</div>
+        <div class="gate-title">Imóvel compatível encontrado</div>
+        <div class="gate-addr">📍 Região de interesse</div>
+      </div>
+    </div>
+    <div class="gate-lock">
+      <h2>Ver todos os imóveis</h2>
+      <p>Informe seu contato para receber a curadoria completa e ser avisado de novos imóveis compatíveis.</p>
+      <input class="gate-input" type="text" id="gateNome" placeholder="Seu nome">
+      <input class="gate-input" type="tel" id="gateWhatsapp" placeholder="WhatsApp (ex: 11999999999)">
+      <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer;">
+        <input type="checkbox" id="gateConsent" style="margin-top:3px;flex-shrink:0;accent-color:var(--accent);">
+        <span style="font-size:12px;color:var(--muted);line-height:1.6;">
+          Autorizo o ImobAI a armazenar meus dados e compartilhá-los com corretores parceiros para contato sobre imóveis compatíveis com meu perfil, conforme a 
+          <a href="/privacidade.html" style="color:var(--accent);">Política de Privacidade</a> e a Lei Geral de Proteção de Dados (LGPD).
+        </span>
+      </label>
+      <button class="btn-gate" onclick="liberarResultados()">Ver meus imóveis →</button>
+      <p class="gate-lgpd">Dúvidas ou exclusão de dados: <a href="mailto:fernando.cmedeiros@hotmail.com">fernando.cmedeiros@hotmail.com</a></p>
+    </div>
+  </div>
+</div>
+
 <div class="screen" id="screen-results">
   <div class="results-wrap">
     <div class="results-top">
@@ -700,7 +766,80 @@ Retorne SOMENTE este JSON, sem markdown:
 // ════════════════════════════════════════════
 // RESULTS
 // ════════════════════════════════════════════
+// Guarda resultado da IA para usar depois do gate
+let resultadoIA = null;
+
 function renderResults(data) {
+  resultadoIA = data;
+  const isLoc = objetivo === 'locacao';
+
+  // Preenche o preview do gate
+  document.getElementById('gatePrefilLabel') && (document.getElementById('gatePerfilLabel').textContent = data.perfil_label || 'Seu Perfil');
+  document.getElementById('gateNota').textContent = data.nota || 'Curadoria personalizada pronta';
+  document.getElementById('gatePreview').classList.toggle('locacao', isLoc);
+
+  // Tags do perfil
+  const tagsEl = document.getElementById('gateTags');
+  tagsEl.innerHTML = [
+    isLoc ? '🔑 Locação' : '🏠 Compra',
+    '📍 ' + userProfile.regiao,
+    ...(data.perfil_tags || [])
+  ].map(t => `<span class="gate-tag">${t}</span>`).join('');
+
+  // Mostra o primeiro imóvel real, blur nos outros
+  if (data.imoveis && data.imoveis[0]) {
+    document.getElementById('gateImovel1Title').textContent = data.imoveis[0].titulo;
+    document.getElementById('gateImovel1Addr').textContent = '📍 ' + data.imoveis[0].endereco;
+  }
+
+  show('gate');
+}
+
+function liberarResultados() {
+  const nome = document.getElementById('gateNome').value.trim();
+  const whatsapp = document.getElementById('gateWhatsapp').value.trim();
+
+  const consent = document.getElementById('gateConsent').checked;
+
+  if (!nome || !whatsapp) {
+    alert('Por favor, informe seu nome e WhatsApp para ver os resultados.');
+    return;
+  }
+
+  if (!consent) {
+    alert('Para continuar, autorize o uso dos seus dados marcando a caixa de consentimento.');
+    return;
+  }
+
+  // Salva contato no lead
+  userProfile.nome = nome;
+  userProfile.whatsapp = whatsapp;
+
+  // Salva lead atualizado no Supabase
+  fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system: 'Só salva o lead, retorne: {"ok": true}',
+      userMessage: 'salvar lead',
+      lead: {
+        objetivo: userProfile.objetivo,
+        regiao: userProfile.regiao,
+        composicao: userProfile.composicao,
+        orcamento: userProfile.orcamento,
+        must_haves: userProfile.must_haves,
+        prioridade: userProfile.prioridade,
+        nome: nome,
+        whatsapp: whatsapp,
+        perfil_label: resultadoIA?.perfil_label || '',
+        consentimento: true,
+        consentimento_data: new Date().toISOString()
+      }
+    })
+  }).catch(() => {});
+
+  // Renderiza resultados completos
+  const data = resultadoIA;
   const isLoc = objetivo === 'locacao';
   const badges = ['', 'silver', 'bronze'];
 
@@ -708,7 +847,7 @@ function renderResults(data) {
     <div class="profile-strip ${isLoc ? 'locacao' : ''}">
       <div class="profile-strip-left">
         <h3>${data.perfil_label || 'Seu Perfil'}</h3>
-        <p>${data.nota || 'Curadoria personalizada pronta'}</p>
+        <p>Olá, ${nome}! Sua curadoria está pronta.</p>
       </div>
       <div class="profile-tags">
         <span class="profile-tag">${isLoc ? '🔑 Locação' : '🏠 Compra'}</span>
