@@ -418,10 +418,7 @@ function selecionarObjetivo(obj) {
   document.getElementById('btnLocacao').classList.toggle('sel', obj === 'locacao');
   const btn = document.getElementById('btnIniciar');
   btn.classList.add('on');
-  btn.removeAttribute('disabled');
-  btn.style.opacity = '1';
-  btn.style.pointerEvents = 'all';
-  btn.onclick = startQuiz;
+  btn.classList.toggle('locacao-mode', obj === 'locacao');
   Qs = obj === 'compra' ? Q_COMPRA : Q_LOCACAO;
   document.getElementById('statPergs').textContent = Qs.length;
 }
@@ -669,16 +666,10 @@ Retorne SOMENTE este JSON, sem markdown:
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-      system,
-        userMessage: "Busque os 3 melhores imóveis para este perfil.",
-        lead: {
-          objetivo: userProfile.objetivo,
-          regiao: userProfile.regiao,
-          composicao: userProfile.composicao,
-          orcamento: userProfile.orcamento,
-          must_haves: userProfile.must_haves,
-          prioridade: userProfile.prioridade
-        }
+        system,
+        userMessage: "Busque os 3 melhores imóveis para este perfil."
+      })
+    });
 
     const data = await res.json();
     const raw = data.content?.[0]?.text || '';
