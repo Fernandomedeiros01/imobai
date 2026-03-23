@@ -679,7 +679,6 @@ Retorne SOMENTE este JSON, sem markdown:
           must_haves: userProfile.must_haves,
           prioridade: userProfile.prioridade
         }
-      })
 
     const data = await res.json();
     const raw = data.content?.[0]?.text || '';
