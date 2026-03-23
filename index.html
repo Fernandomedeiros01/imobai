@@ -98,6 +98,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .regiao-chip { font-size: 12px; padding: 5px 12px; border-radius: 99px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: all .15s; }
 .regiao-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 .regiao-chip.loc:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+.regiao-autocomplete { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px rgba(28,25,23,.08); overflow: hidden; z-index: 20; display: none; }
+.regiao-autocomplete.show { display: block; }
+.regiao-sugestao { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: transparent; border: none; border-bottom: 1px solid var(--border); text-align: left; font-family: "DM Sans", sans-serif; font-size: 14px; color: var(--text); cursor: pointer; transition: background .15s; }
+.regiao-sugestao:last-child { border-bottom: none; }
+.regiao-sugestao:hover { background: var(--accent-light); }
+.regiao-sugestao.loc:hover { background: var(--blue-light); }
+.regiao-sugestao-icone { font-size: 14px; }
+.regiao-sugestao-texto { flex: 1; }
+.regiao-sugestao-titulo { font-weight: 500; }
+.regiao-sugestao-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .q-nav { display: flex; gap: 8px; margin-top: 1.5rem; }
 .btn-back { padding: 12px 18px; border: 1.5px solid var(--border); border-radius: 10px; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; transition: all .15s; }
 .btn-back:hover { border-color: var(--text); color: var(--text); }
@@ -355,8 +365,66 @@ function renderQ() {
   document.getElementById('qArea').innerHTML = `<div class="q-card"><div class="q-pilar${locClass}">${escapeHtml(q.pilar)}</div><h2 class="q-title">${escapeHtml(q.title)}</h2><p class="q-hint">${escapeHtml(q.hint)}</p>${q.type === 'multi' ? `<div class="multi-badge">○ Pode escolher mais de uma${q.max ? ` (máx. ${q.max})` : ''}</div>` : ''}${inputHtml}<div class="q-nav">${cur > 0 ? `<button type="button" class="btn-back" onclick="goBack()">←</button>` : ''}<button type="button" class="btn-next ${isLoc ? 'loc-mode' : ''} ${hasAnswer ? 'on' : ''}" id="btnNext" onclick="next()">${cur === Qs.length - 1 ? 'Ver meus imóveis →' : 'Continuar →'}</button></div></div>`;
   if (q.type === 'regiao') setTimeout(() => document.getElementById('regiaoInput')?.focus(), 100);
 }
-function onRegiaoInput(val) { regiaoValue = val; const btn = document.getElementById('btnNext'); if (btn) btn.classList.toggle('on', val.trim().length > 0); }
-function preencherRegiao(val) { regiaoValue = val; const input = document.getElementById('regiaoInput'); if (input) input.value = val; const btn = document.getElementById('btnNext'); if (btn) btn.classList.add('on'); }
+function onRegiaoInput(val) {
+  regiaoValue = val;
+  const btn = document.getElementById('btnNext');
+  if (btn) btn.classList.toggle('on', val.trim().length > 0);
+  renderRegiaoAutocomplete();
+}
+function preencherRegiao(val) {
+  regiaoValue = val;
+  const input = document.getElementById('regiaoInput');
+  if (input) input.value = val;
+  const btn = document.getElementById('btnNext');
+  if (btn) btn.classList.add('on');
+  esconderRegiaoAutocomplete();
+}
+function normalizarBuscaRegiao(text) {
+  return String(text || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim();
+}
+function obterSugestoesRegiao(termo) {
+  const busca = normalizarBuscaRegiao(termo);
+  if (!busca) return [];
+  return REGIOES_AUTOCOMPLETE.filter(item => {
+    const nome = normalizarBuscaRegiao(item.nome);
+    const detalhe = normalizarBuscaRegiao(item.detalhe);
+    return nome.includes(busca) || detalhe.includes(busca);
+  }).slice(0, 5);
+}
+function renderRegiaoAutocomplete() {
+  const box = document.getElementById('regiaoAutocomplete');
+  if (!box) return;
+
+  const sugestoes = obterSugestoesRegiao(regiaoValue);
+  if (!regiaoValue.trim() || sugestoes.length === 0) {
+    box.innerHTML = '';
+    box.classList.remove('show');
+    return;
+  }
+
+  const isLoc = objetivo === 'locacao';
+  box.innerHTML = sugestoes.map(item => `
+    <button type="button" class="regiao-sugestao ${isLoc ? 'loc' : ''}" onclick="preencherRegiao('${item.nome.replace(/'/g, "\'")}')">
+      <span class="regiao-sugestao-icone">📍</span>
+      <span class="regiao-sugestao-texto">
+        <span class="regiao-sugestao-titulo">${item.nome}</span>
+        <div class="regiao-sugestao-sub">${item.detalhe}</div>
+      </span>
+    </button>
+  `).join('');
+  box.classList.add('show');
+}
+function esconderRegiaoAutocomplete() {
+  const box = document.getElementById('regiaoAutocomplete');
+  if (!box) return;
+  setTimeout(() => {
+    box.classList.remove('show');
+  }, 120);
+}
 function pick(i) {
   const q = Qs[cur], label = q.opts[i].l;
   if (q.type === 'single') ans[cur] = [label]; else {
