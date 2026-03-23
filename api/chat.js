@@ -4,12 +4,11 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'API key not configured' });
-  }
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_KEY;
 
   try {
-    const { system, userMessage } = req.body;
+    const { system, userMessage, lead } = req.body;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -27,6 +26,20 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+
+    // Salva o lead no Supabase
+    if (lead && supabaseUrl && supabaseKey) {
+      await fetch(`${supabaseUrl}/rest/v1/leads`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`
+        },
+        body: JSON.stringify(lead)
+      });
+    }
+
     return res.status(200).json(data);
 
   } catch (error) {
