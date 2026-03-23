@@ -277,6 +277,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   </div>
 </div>
 
+<!-- ══ RESULTS ══ -->
 <!-- ══ LEAD GATE ══ -->
 <div class="screen" id="screen-gate">
   <div class="gate-wrap">
@@ -310,7 +311,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer;">
         <input type="checkbox" id="gateConsent" style="margin-top:3px;flex-shrink:0;accent-color:var(--accent);">
         <span style="font-size:12px;color:var(--muted);line-height:1.6;">
-          Autorizo o ImobAI a armazenar meus dados e compartilhá-los com corretores parceiros para contato sobre imóveis compatíveis com meu perfil, conforme a
+          Autorizo o ImobAI a armazenar meus dados e compartilhá-los com corretores parceiros para contato sobre imóveis compatíveis com meu perfil, conforme a 
           <a href="/privacidade.html" style="color:var(--accent);">Política de Privacidade</a> e a Lei Geral de Proteção de Dados (LGPD).
         </span>
       </label>
@@ -320,7 +321,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   </div>
 </div>
 
-<!-- ══ RESULTS ══ -->
 <div class="screen" id="screen-results">
   <div class="results-wrap">
     <div class="results-top">
@@ -337,6 +337,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 <script>
 // ════════════════════════════════════════════
 // QUESTIONÁRIOS — COMPRA e LOCAÇÃO separados
+// Edite livremente as perguntas aqui abaixo
 // ════════════════════════════════════════════
 
 const Q_COMPRA = [
@@ -467,13 +468,12 @@ const Q_LOCACAO = [
 // ════════════════════════════════════════════
 // ESTADO
 // ════════════════════════════════════════════
-let objetivo = null;
+let objetivo = null;  // 'compra' | 'locacao'
 let Qs = [];
 let cur = 0;
 let ans = [];
 let userProfile = {};
 let regiaoValue = '';
-let resultadoIA = null;
 
 // ════════════════════════════════════════════
 // HERO
@@ -482,7 +482,6 @@ function selecionarObjetivo(obj) {
   objetivo = obj;
   document.getElementById('btnCompra').classList.toggle('sel', obj === 'compra');
   document.getElementById('btnLocacao').classList.toggle('sel', obj === 'locacao');
-
   const btn = document.getElementById('btnIniciar');
   btn.classList.add('on');
   btn.classList.toggle('locacao-mode', obj === 'locacao');
@@ -490,27 +489,21 @@ function selecionarObjetivo(obj) {
   btn.style.pointerEvents = 'all';
   btn.style.cursor = 'pointer';
   btn.onclick = function() { startQuiz(); };
-
   Qs = obj === 'compra' ? Q_COMPRA : Q_LOCACAO;
   document.getElementById('statPergs').textContent = Qs.length;
 }
 
-function goHome() {
-  show('hero');
-}
+function goHome() { show('hero'); }
 
 function startQuiz() {
   if (!objetivo) return;
-
   cur = 0;
   ans = Qs.map(() => []);
   regiaoValue = '';
-  resultadoIA = null;
 
   const isLoc = objetivo === 'locacao';
   document.getElementById('logoSpan').className = isLoc ? 'loc' : '';
   document.getElementById('pFill').className = 'progress-fill' + (isLoc ? ' locacao' : '');
-
   const badge = document.getElementById('modeBadge');
   badge.textContent = isLoc ? '🔑 Locação' : '🏠 Compra';
   badge.className = 'quiz-mode-badge ' + (isLoc ? 'locacao' : 'compra');
@@ -536,15 +529,14 @@ function renderQ() {
   let inputHtml = '';
   if (q.type === 'regiao') {
     const chips = (q.sugestoes || []).map(s =>
-      `<span class="regiao-chip ${isLoc ? 'loc' : ''}" onclick="preencherRegiao('${s.replace(/'/g, "\\'")}')">${s}</span>`
+      `<span class="regiao-chip ${isLoc?'loc':''}" onclick="preencherRegiao('${s}')">${s}</span>`
     ).join('');
-
     inputHtml = `
       <div class="regiao-input-wrap">
         <span class="regiao-icon">📍</span>
-        <input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput"
+        <input class="regiao-input ${isLoc?'loc':''}" type="text" id="regiaoInput"
           placeholder="Ex: Pinheiros, Vila Mariana, ABC..."
-          value="${escapeHtml(regiaoValue)}"
+          value="${regiaoValue}"
           oninput="onRegiaoInput(this.value)"
           autocomplete="off">
       </div>
@@ -554,9 +546,9 @@ function renderQ() {
     inputHtml = `
       <div class="opts ${q.layout === 'grid' ? 'grid' : ''}">
         ${q.opts.map((o, i) => `
-          <button type="button" class="opt ${sel.includes(o.l) ? 'sel' + locClass : ''}" onclick="pick(${i})">
+          <button class="opt ${sel.includes(o.l) ? 'sel'+locClass : ''}" onclick="pick(${i})">
             <span class="opt-icon">${o.i}</span>
-            <span class="opt-text">${escapeHtml(o.l)}${o.s ? `<div class="opt-sub">${escapeHtml(o.s)}</div>` : ''}</span>
+            <span class="opt-text">${o.l}${o.s ? `<div class="opt-sub">${o.s}</div>` : ''}</span>
           </button>`).join('')}
       </div>`;
   }
@@ -564,14 +556,14 @@ function renderQ() {
   const locClass = isLoc ? ' loc' : '';
   document.getElementById('qArea').innerHTML = `
     <div class="q-card">
-      <div class="q-pilar${locClass}">${escapeHtml(q.pilar)}</div>
-      <h2 class="q-title">${escapeHtml(q.title)}</h2>
-      <p class="q-hint">${escapeHtml(q.hint)}</p>
+      <div class="q-pilar${locClass}">${q.pilar}</div>
+      <h2 class="q-title">${q.title}</h2>
+      <p class="q-hint">${q.hint}</p>
       ${q.type === 'multi' ? `<div class="multi-badge">○ Pode escolher mais de uma${q.max ? ` (máx. ${q.max})` : ''}</div>` : ''}
       ${inputHtml}
       <div class="q-nav">
-        ${cur > 0 ? `<button type="button" class="btn-back" onclick="goBack()">←</button>` : ''}
-        <button type="button" class="btn-next ${isLoc ? 'loc-mode' : ''} ${hasAnswer ? 'on' : ''}" id="btnNext" onclick="next()">
+        ${cur > 0 ? `<button class="btn-back" onclick="goBack()">←</button>` : ''}
+        <button class="btn-next ${isLoc?'loc-mode':''} ${hasAnswer?'on':''}" id="btnNext" onclick="next()">
           ${cur === Qs.length - 1 ? 'Ver meus imóveis →' : 'Continuar →'}
         </button>
       </div>
@@ -592,7 +584,6 @@ function preencherRegiao(val) {
   regiaoValue = val;
   const input = document.getElementById('regiaoInput');
   if (input) input.value = val;
-
   const btn = document.getElementById('btnNext');
   if (btn) btn.classList.add('on');
 }
@@ -600,19 +591,16 @@ function preencherRegiao(val) {
 function pick(i) {
   const q = Qs[cur];
   const label = q.opts[i].l;
-
   if (q.type === 'single') {
     ans[cur] = [label];
   } else {
     const idx = ans[cur].indexOf(label);
-    if (idx > -1) {
-      ans[cur].splice(idx, 1);
-    } else {
+    if (idx > -1) ans[cur].splice(idx, 1);
+    else {
       if (q.max && ans[cur].length >= q.max) return;
       ans[cur].push(label);
     }
   }
-
   renderQ();
 }
 
@@ -624,11 +612,7 @@ function next() {
   if (q.type === 'regiao') ans[cur] = [regiaoValue.trim()];
 
   cur++;
-  if (cur >= Qs.length) {
-    buildProfileAndSearch();
-    return;
-  }
-
+  if (cur >= Qs.length) { buildProfileAndSearch(); return; }
   renderQ();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -652,27 +636,27 @@ function buildProfileAndSearch() {
     userProfile = {
       objetivo: 'Comprar',
       regiao,
-      composicao: ans[1][0] || 'Não informado',
-      orcamento: ans[2][0] || 'Não informado',
-      finalidade: ans[3][0] || 'Moradia própria',
-      mobilidade: ans[4].join(', ') || 'Não informado',
-      must_haves: ans[5].join(', ') || 'Nenhum',
-      tipo_imovel: ans[6][0] || 'Qualquer',
-      prioridade: ans[7][0] || 'Localização',
+      composicao:   ans[1][0] || 'Não informado',
+      orcamento:    ans[2][0] || 'Não informado',
+      finalidade:   ans[3][0] || 'Moradia própria',
+      mobilidade:   ans[4].join(', ') || 'Não informado',
+      must_haves:   ans[5].join(', ') || 'Nenhum',
+      tipo_imovel:  ans[6][0] || 'Qualquer',
+      prioridade:   ans[7][0] || 'Localização',
       criterios: 'Preço: 30% | Localização: 25% | Liquidez: 20% | Qualidade: 15% | Aderência ao perfil: 10%'
     };
   } else {
     userProfile = {
       objetivo: 'Alugar',
       regiao,
-      composicao: ans[1][0] || 'Não informado',
-      orcamento: ans[2][0] || 'Não informado',
-      trabalho: ans[3][0] || 'Não informado',
-      mobilidade: ans[4].join(', ') || 'Não informado',
-      must_haves: ans[5].join(', ') || 'Nenhum',
-      uso_casa: ans[6][0] || 'Não informado',
-      permanencia: ans[7][0] || 'Indefinido',
-      prioridade: ans[8][0] || 'Localização',
+      composicao:   ans[1][0] || 'Não informado',
+      orcamento:    ans[2][0] || 'Não informado',
+      trabalho:     ans[3][0] || 'Não informado',
+      mobilidade:   ans[4].join(', ') || 'Não informado',
+      must_haves:   ans[5].join(', ') || 'Nenhum',
+      uso_casa:     ans[6][0] || 'Não informado',
+      permanencia:  ans[7][0] || 'Indefinido',
+      prioridade:   ans[8][0] || 'Localização',
       criterios: 'Aderência ao perfil: 30% | Localização: 25% | Qualidade: 20% | Preço: 15% | Flexibilidade: 10%'
     };
   }
@@ -683,10 +667,10 @@ function buildProfileAndSearch() {
 }
 
 function animateLoading() {
-  [0, 1, 2, 3, 4].forEach((s, i) => {
+  [0,1,2,3,4].forEach((s, i) => {
     setTimeout(() => {
-      if (i > 0) document.getElementById('ls' + (i - 1)).className = 'loading-step done';
-      document.getElementById('ls' + s).className = 'loading-step active';
+      if (i > 0) document.getElementById('ls'+(i-1)).className = 'loading-step done';
+      document.getElementById('ls'+s).className = 'loading-step active';
     }, i * 900);
   });
 }
@@ -747,6 +731,7 @@ Retorne SOMENTE este JSON, sem markdown:
 }`;
 
   try {
+    // Chama o backend seguro — a API Key nunca aparece aqui
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -773,8 +758,7 @@ Retorne SOMENTE este JSON, sem markdown:
       document.getElementById('ls4').className = 'loading-step done';
       setTimeout(() => renderResults(result), 400);
     }, 4600);
-  } catch (e) {
-    console.error('Erro ao chamar /api/chat:', e);
+  } catch(e) {
     setTimeout(() => renderError(), 4600);
   }
 }
@@ -782,23 +766,28 @@ Retorne SOMENTE este JSON, sem markdown:
 // ════════════════════════════════════════════
 // RESULTS
 // ════════════════════════════════════════════
+// Guarda resultado da IA para usar depois do gate
+let resultadoIA = null;
+
 function renderResults(data) {
   resultadoIA = data;
   const isLoc = objetivo === 'locacao';
 
-  const gatePerfil = document.getElementById('gatePerfilLabel');
+  // Preenche o preview do gate
+  document.getElementById('const gatePerfil = document.getElementById('gatePerfilLabel');
   if (gatePerfil) gatePerfil.textContent = data.perfil_label || 'Seu Perfil';
-
   document.getElementById('gateNota').textContent = data.nota || 'Curadoria personalizada pronta';
   document.getElementById('gatePreview').classList.toggle('locacao', isLoc);
 
+  // Tags do perfil
   const tagsEl = document.getElementById('gateTags');
   tagsEl.innerHTML = [
     isLoc ? '🔑 Locação' : '🏠 Compra',
     '📍 ' + userProfile.regiao,
     ...(data.perfil_tags || [])
-  ].map(t => `<span class="gate-tag">${escapeHtml(t)}</span>`).join('');
+  ].map(t => `<span class="gate-tag">${t}</span>`).join('');
 
+  // Mostra o primeiro imóvel real, blur nos outros
   if (data.imoveis && data.imoveis[0]) {
     document.getElementById('gateImovel1Title').textContent = data.imoveis[0].titulo;
     document.getElementById('gateImovel1Addr').textContent = '📍 ' + data.imoveis[0].endereco;
@@ -810,6 +799,7 @@ function renderResults(data) {
 function liberarResultados() {
   const nome = document.getElementById('gateNome').value.trim();
   const whatsapp = document.getElementById('gateWhatsapp').value.trim();
+
   const consent = document.getElementById('gateConsent').checked;
 
   if (!nome || !whatsapp) {
@@ -822,9 +812,11 @@ function liberarResultados() {
     return;
   }
 
+  // Salva contato no lead
   userProfile.nome = nome;
   userProfile.whatsapp = whatsapp;
 
+  // Salva lead atualizado no Supabase
   fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -847,25 +839,21 @@ function liberarResultados() {
     })
   }).catch(() => {});
 
+  // Renderiza resultados completos
   const data = resultadoIA;
-  if (!data || !Array.isArray(data.imoveis)) {
-    renderError();
-    return;
-  }
-
   const isLoc = objetivo === 'locacao';
   const badges = ['', 'silver', 'bronze'];
 
   document.getElementById('profileStrip').innerHTML = `
     <div class="profile-strip ${isLoc ? 'locacao' : ''}">
       <div class="profile-strip-left">
-        <h3>${escapeHtml(data.perfil_label || 'Seu Perfil')}</h3>
-        <p>Olá, ${escapeHtml(nome)}! Sua curadoria está pronta.</p>
+        <h3>${data.perfil_label || 'Seu Perfil'}</h3>
+        <p>Olá, ${nome}! Sua curadoria está pronta.</p>
       </div>
       <div class="profile-tags">
         <span class="profile-tag">${isLoc ? '🔑 Locação' : '🏠 Compra'}</span>
-        <span class="profile-tag">📍 ${escapeHtml(userProfile.regiao)}</span>
-        ${(data.perfil_tags || []).map(t => `<span class="profile-tag">${escapeHtml(t)}</span>`).join('')}
+        <span class="profile-tag">📍 ${userProfile.regiao}</span>
+        ${(data.perfil_tags || []).map(t => `<span class="profile-tag">${t}</span>`).join('')}
       </div>
     </div>`;
 
@@ -877,22 +865,22 @@ function liberarResultados() {
       <div class="imovel-top">
         <div class="rank-badge ${badges[idx]} ${isLoc ? 'loc' : ''}">#${im.rank}</div>
         <div class="imovel-meta">
-          <div class="imovel-title">${escapeHtml(im.titulo)}</div>
-          <div class="imovel-addr">📍 ${escapeHtml(im.endereco)}</div>
+          <div class="imovel-title">${im.titulo}</div>
+          <div class="imovel-addr">📍 ${im.endereco}</div>
         </div>
         <div class="imovel-score-wrap">
           <div class="score-circle ${isLoc ? 'loc' : ''}">
-            <div class="score-num ${isLoc ? 'loc' : ''}">${escapeHtml(String(im.score ?? ''))}</div>
+            <div class="score-num ${isLoc ? 'loc' : ''}">${im.score}</div>
             <div class="score-lbl">score</div>
           </div>
         </div>
       </div>
       <div class="imovel-tags">
-        ${(im.tags_match || []).map(t => `<span class="itag match">✓ ${escapeHtml(t)}</span>`).join('')}
-        ${(im.tags_neutro || []).map(t => `<span class="itag neutral">${escapeHtml(t)}</span>`).join('')}
-        <span class="itag price">${escapeHtml(im.preco || '')}</span>
+        ${im.tags_match.map(t => `<span class="itag match">✓ ${t}</span>`).join('')}
+        ${im.tags_neutro.map(t => `<span class="itag neutral">${t}</span>`).join('')}
+        <span class="itag price">${im.preco}</span>
       </div>
-      <div class="imovel-justif">${im.justificativa || ''}</div>
+      <div class="imovel-justif">${im.justificativa}</div>
       <a href="${montarLinkZap(im)}" target="_blank" rel="noopener noreferrer" style="
         display:inline-flex;align-items:center;gap:6px;
         margin-top:12px;padding:9px 16px;
@@ -918,14 +906,10 @@ function renderError() {
   show('results');
 }
 
-// ════════════════════════════════════════════
-// ZAP LINK
-// ════════════════════════════════════════════
-<script>
 function normalizarTextoZap(text) {
   return (text || '')
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
     .trim();
 }
@@ -945,7 +929,6 @@ function detectarTipoZap(im) {
 function montarLocalizacaoZap(regiao) {
   const r = normalizarTextoZap(regiao);
 
-  // mapa inicial dos bairros/regiões que você mais quer usar no MVP
   const mapa = {
     'jaragua': 'sp%2Bsao-paulo%2Bzona-norte%2Bjaragua',
     'jaraguá': 'sp%2Bsao-paulo%2Bzona-norte%2Bjaragua',
@@ -963,31 +946,41 @@ function montarLocalizacaoZap(regiao) {
   };
 
   if (mapa[r]) return mapa[r];
-
-  // fallback seguro: abre São Paulo inteiro, sem quebrar
   return 'sp%2Bsao-paulo';
 }
 
-function montarFiltrosZap(im) {
-  const titulo = normalizarTextoZap(im?.titulo || '');
-  const preco = String(im?.preco || '');
+function inferirQuartosZap() {
+  const p = userProfile || {};
+  if (p.composicao === 'Casal') return '2';
+  if (p.composicao === 'Família') return '3';
+  if (p.composicao === 'Roommates') return '2';
+  return '1';
+}
 
-  const quartosMatch = titulo.match(/(\d+)\s*quartos?/i) || preco.match(/(\d+)\s*quartos?/i);
-  const quartos = quartosMatch ? quartosMatch[1] : '';
+function inferirPrecoMaxZap() {
+  const p = userProfile || {};
+  const orc = p.orcamento || '';
 
-  const precoNumerico = preco.replace(/\D/g, '');
+  if (objetivo === 'locacao') {
+    if (orc.includes('2.000')) return '2000';
+    if (orc.includes('4.000')) return '4000';
+    if (orc.includes('7.000')) return '7000';
+    return '15000';
+  }
 
+  if (orc.includes('300')) return '300000';
+  if (orc.includes('600')) return '600000';
+  if (orc.includes('1 mi')) return '1000000';
+  return '3000000';
+}
+
+function montarFiltrosZap() {
   const params = new URLSearchParams();
+  const quartos = inferirQuartosZap();
+  const precoMax = inferirPrecoMaxZap();
 
   if (quartos) params.set('quartos', quartos);
-
-  if (precoNumerico) {
-    if (objetivo === 'locacao') {
-      params.set('precoMaximo', precoNumerico);
-    } else {
-      params.set('precoMaximo', precoNumerico);
-    }
-  }
+  if (precoMax) params.set('precoMaximo', precoMax);
 
   const qs = params.toString();
   return qs ? `?${qs}` : '';
@@ -997,23 +990,9 @@ function montarLinkZap(im) {
   const transacao = objetivo === 'locacao' ? 'aluguel' : 'venda';
   const tipo = detectarTipoZap(im);
   const localizacao = montarLocalizacaoZap(userProfile.regiao || 'São Paulo');
-  const filtros = montarFiltrosZap(im);
+  const filtros = montarFiltrosZap();
 
   return `https://www.zapimoveis.com.br/${transacao}/${tipo}/${localizacao}/${filtros}`;
-}
-</script>
-}
-
-// ════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════
-function escapeHtml(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
 }
 
 function show(id) {
