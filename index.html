@@ -98,8 +98,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .regiao-chip { font-size: 12px; padding: 5px 12px; border-radius: 99px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: all .15s; }
 .regiao-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 .regiao-chip.loc:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
-.regiao-autocomplete { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px rgba(28,25,23,.08); overflow: hidden; z-index: 20; display: none; }
-.regiao-autocomplete.show { display: block; }
 .regiao-sugestao { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: transparent; border: none; border-bottom: 1px solid var(--border); text-align: left; font-family: "DM Sans", sans-serif; font-size: 14px; color: var(--text); cursor: pointer; transition: background .15s; }
 .regiao-sugestao:last-child { border-bottom: none; }
 .regiao-sugestao:hover { background: var(--accent-light); }
@@ -203,12 +201,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 .regiao-autocomplete { position: relative; }
 .regiao-sugestoes {
-  margin-top: 8px;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(28,25,23,.06);
+  z-index: 20;
 }
 .sug-item {
   padding: 11px 14px;
