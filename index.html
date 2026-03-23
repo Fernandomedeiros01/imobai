@@ -200,6 +200,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 
 .regiao-autocomplete { position: relative; }
+
 .regiao-sugestoes {
   position: absolute;
   top: calc(100% + 6px);
@@ -211,25 +212,29 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(28,25,23,.06);
   z-index: 20;
+  display: none;
 }
-.sug-item {
-  padding: 11px 14px;
-  font-size: 14px;
-  color: var(--text);
-  cursor: pointer;
+.regiao-sugestao {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: none;
   border-bottom: 1px solid var(--border);
+  text-align: left;
+  cursor: pointer;
   transition: background .15s, color .15s;
 }
-.sug-item:last-child { border-bottom: none; }
-.sug-item:hover {
-  background: var(--accent-light);
-  color: var(--accent);
-}
-.sug-empty {
-  padding: 11px 14px;
-  font-size: 13px;
-  color: var(--muted);
-}
+.regiao-sugestao:last-child { border-bottom: none; }
+.regiao-sugestao:hover { background: var(--accent-light); }
+.regiao-sugestao.loc:hover { background: var(--blue-light); }
+.regiao-sugestao-icone { flex-shrink: 0; }
+.regiao-sugestao-texto { display: flex; flex-direction: column; gap: 2px; }
+.regiao-sugestao-titulo { font-size: 14px; color: var(--text); }
+.regiao-sugestao-sub { font-size: 12px; color: var(--muted); }
+
 
 </style>
 </head>
@@ -393,7 +398,7 @@ function renderQ() {
           <span class="regiao-icon">📍</span>
           <input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput" placeholder="Ex: Pinheiros, Vila Mariana, ABC..." value="${escapeHtml(regiaoValue)}" oninput="onRegiaoInput(this.value)" autocomplete="off">
         </div>
-        <div id="regiaoSugestoes" class="regiao-sugestoes" style="display:none"></div>
+        <div id="regiaoSugestoes" class="regiao-sugestoes"></div>
       </div>
       <div class="regiao-chips">${chips}</div>`;
   } else {
@@ -402,7 +407,17 @@ function renderQ() {
   }
   const locClass = isLoc ? ' loc' : '';
   document.getElementById('qArea').innerHTML = `<div class="q-card"><div class="q-pilar${locClass}">${escapeHtml(q.pilar)}</div><h2 class="q-title">${escapeHtml(q.title)}</h2><p class="q-hint">${escapeHtml(q.hint)}</p>${q.type === 'multi' ? `<div class="multi-badge">○ Pode escolher mais de uma${q.max ? ` (máx. ${q.max})` : ''}</div>` : ''}${inputHtml}<div class="q-nav">${cur > 0 ? `<button type="button" class="btn-back" onclick="goBack()">←</button>` : ''}<button type="button" class="btn-next ${isLoc ? 'loc-mode' : ''} ${hasAnswer ? 'on' : ''}" id="btnNext" onclick="next()">${cur === Qs.length - 1 ? 'Ver meus imóveis →' : 'Continuar →'}</button></div></div>`;
-  if (q.type === 'regiao') setTimeout(() => document.getElementById('regiaoInput')?.focus(), 100);
+  if (q.type === 'regiao') {
+    setTimeout(() => {
+      const input = document.getElementById('regiaoInput');
+      if (input) {
+        input.focus();
+        input.addEventListener('focus', function() {
+          if (regiaoValue.trim()) renderRegiaoAutocomplete();
+        });
+      }
+    }, 100);
+  }
 }
 function onRegiaoInput(val) {
   regiaoValue = val;
@@ -441,7 +456,7 @@ function renderRegiaoAutocomplete() {
   const sugestoes = obterSugestoesRegiao(regiaoValue);
   if (!regiaoValue.trim() || sugestoes.length === 0) {
     box.innerHTML = '';
-    box.classList.remove('show');
+    box.style.display = 'none';
     return;
   }
 
@@ -455,13 +470,13 @@ function renderRegiaoAutocomplete() {
       </span>
     </button>
   `).join('');
-  box.classList.add('show');
+  box.style.display = 'block';
 }
 function esconderRegiaoAutocomplete() {
   const box = document.getElementById('regiaoSugestoes');
   if (!box) return;
   setTimeout(() => {
-    box.classList.remove('show');
+    box.style.display = 'none';
   }, 120);
 }
 function pick(i) {
