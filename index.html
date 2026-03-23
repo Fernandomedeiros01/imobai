@@ -51,7 +51,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .stat { text-align: center; }
 .stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--text); }
 .stat-label { font-size: 11px; color: var(--subtle); margin-top: 2px; }
-.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px 32px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background .2s, transform .15s; opacity: .4; pointer-events: none; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px 32px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background .2s, transform .15s, opacity .2s; opacity: .4; pointer-events: all; }
 .btn-primary.on { opacity: 1; pointer-events: all; }
 .btn-primary.on:hover { background: var(--accent-hover); transform: translateY(-1px); }
 .btn-primary.locacao-mode { background: var(--blue); }
@@ -377,7 +377,16 @@ function selecionarObjetivo(obj) {
 }
 function goHome() { show('hero'); }
 function startQuiz() {
-  if (!objetivo) return;
+  if (!objetivo) {
+    document.getElementById('btnCompra').style.animation = 'pulse-border .4s ease';
+    document.getElementById('btnLocacao').style.animation = 'pulse-border .4s ease';
+    setTimeout(() => {
+      document.getElementById('btnCompra').style.animation = '';
+      document.getElementById('btnLocacao').style.animation = '';
+    }, 400);
+    alert('Selecione Comprar ou Alugar para continuar.');
+    return;
+  }
   cur = 0; ans = Qs.map(() => []); regiaoValue = ''; resultadoIA = null;
   const isLoc = objetivo === 'locacao';
   document.getElementById('logoSpan').className = isLoc ? 'loc' : '';
