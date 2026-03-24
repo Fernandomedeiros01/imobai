@@ -38,7 +38,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   border-radius: var(--radius); background: var(--card);
   cursor: pointer; font-family: 'DM Sans', sans-serif;
 }
-.obj-btn:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+.obj-btn:not(.sel):hover { border-color: var(--accent-mid); background: var(--accent-light); }
 .obj-btn.compra.sel,
 .obj-btn.compra.sel:hover { border-color: var(--accent) !important; background: var(--accent-light) !important; border-width: 3px !important; }
 .obj-btn.locacao.sel,
@@ -248,12 +248,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <h1 class="hero-logo">imob<span>AI</span></h1>
     <p class="hero-sub">O que você está buscando?<br>Cada objetivo tem um questionário feito sob medida.</p>
     <div class="hero-objetivo">
-      <button id="btnCompra" onclick="selecionarObjetivo('compra')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:1.25rem 1rem;border:2px solid #E5E0D8;border-radius:18px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;">
+      <button id="btnCompra" onclick="selecionarObjetivo('compra')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:1.25rem 1rem;border:2px solid #E5E0D8;border-radius:18px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;transition:none;">
         <span style="font-size:28px">🏠</span>
         <span style="font-size:15px;font-weight:500;color:#1C1917" id="lblCompra">Comprar</span>
         <span style="font-size:11px;color:#78716C">Decisão patrimonial</span>
       </button>
-      <button id="btnLocacao" onclick="selecionarObjetivo('locacao')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:1.25rem 1rem;border:2px solid #E5E0D8;border-radius:18px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;">
+      <button id="btnLocacao" onclick="selecionarObjetivo('locacao')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:1.25rem 1rem;border:2px solid #E5E0D8;border-radius:18px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;transition:none;">
         <span style="font-size:28px">🔑</span>
         <span style="font-size:15px;font-weight:500;color:#1C1917" id="lblLocacao">Alugar</span>
         <span style="font-size:11px;color:#78716C">Flexibilidade e experiência</span>
@@ -264,7 +264,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <div class="stat"><div class="stat-num">3</div><div class="stat-label">opções curadas</div></div>
       <div class="stat"><div class="stat-num">2min</div><div class="stat-label">tempo médio</div></div>
     </div>
-    <button id="btnIniciar" onclick="startQuiz()" style="display:inline-flex;align-items:center;gap:8px;background:#C2541A;color:#fff;border:none;border-radius:12px;padding:16px 32px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;opacity:.4;pointer-events:none;">Começar busca →</button>
+    <button id="btnIniciar" onclick="startQuiz()" style="display:inline-flex;align-items:center;gap:8px;background:#C2541A;color:#fff;border:none;border-radius:12px;padding:16px 32px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;opacity:.4;pointer-events:none;transition:none;">Começar busca →</button>
   </div>
 </div>
 <div class="screen" id="screen-quiz">
@@ -325,7 +325,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         <span style="font-size:12px;color:var(--muted);line-height:1.6;">Autorizo o ImobAI a armazenar meus dados e compartilhá-los com corretores parceiros para contato sobre imóveis compatíveis com meu perfil, conforme a <a href="/privacidade.html" style="color:var(--accent);">Política de Privacidade</a> e a Lei Geral de Proteção de Dados (LGPD).</span>
       </label>
       <button class="btn-gate" onclick="liberarResultados()">Ver meus imóveis →</button>
-      <p class="gate-lgpd">Dúvidas ou exclusão de dados: <a href="/cdn-cgi/l/email-protection#e38586918d828d878ccd808e8687868a918c90a38b8c978e828a8fcd808c8e"><span class="__cf_email__" data-cfemail="335556415d525d575c1d505e5657565a415c40735b5c475e525a5f1d505c5e">[email&#160;protected]</span></a></p>
+      <p class="gate-lgpd">Dúvidas ou exclusão de dados: <a href="mailto:fernando.cmedeiros@hotmail.com">fernando.cmedeiros@hotmail.com</a></p>
     </div>
   </div>
 </div>
@@ -341,7 +341,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <div class="results-footer"><p>Resultados gerados por IA com base no seu perfil.<br>Use os botões para pesquisar opções parecidas ou falar com um especialista.</p></div>
   </div>
 </div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const Q_COMPRA = [
   { pilar:"Região", title:"Onde você quer comprar?", hint:"Digite o bairro ou região, ou escolha uma sugestão abaixo.", type:"regiao", sugestoes:["Pinheiros","Vila Mariana","Moema","Santana","Santo André","Campinas"] },
   { pilar:"Perfil", title:"Com quem você vai morar?", hint:"Define o tamanho ideal e as áreas prioritárias do imóvel.", type:"single", layout:"grid", opts:[{i:"🧍",l:"Sozinho",s:""},{i:"👫",l:"Casal",s:"Sem filhos"},{i:"👨‍👩‍👧",l:"Família",s:"Com filhos"},{i:"🤝",l:"Roommates",s:"Moradia compartilhada"}] },
