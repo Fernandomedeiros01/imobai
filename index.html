@@ -98,8 +98,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .regiao-chip { font-size: 12px; padding: 5px 12px; border-radius: 99px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: all .15s; }
 .regiao-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 .regiao-chip.loc:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
-.regiao-autocomplete { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px rgba(28,25,23,.08); overflow: hidden; z-index: 20; display: none; }
-.regiao-autocomplete.show { display: block; }
 .regiao-sugestao { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: transparent; border: none; border-bottom: 1px solid var(--border); text-align: left; font-family: "DM Sans", sans-serif; font-size: 14px; color: var(--text); cursor: pointer; transition: background .15s; }
 .regiao-sugestao:last-child { border-bottom: none; }
 .regiao-sugestao:hover { background: var(--accent-light); }
@@ -200,6 +198,44 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .gate-lgpd { font-size: 11px; color: var(--subtle); line-height: 1.6; text-align: center; }
 .gate-lgpd a { color: var(--muted); }
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+.regiao-autocomplete { position: relative; }
+
+.regiao-sugestoes {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(28,25,23,.06);
+  z-index: 20;
+  display: none;
+}
+.regiao-sugestao {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.regiao-sugestao:last-child { border-bottom: none; }
+.regiao-sugestao:hover { background: var(--accent-light); }
+.regiao-sugestao.loc:hover { background: var(--blue-light); }
+.regiao-sugestao-icone { flex-shrink: 0; }
+.regiao-sugestao-texto { display: flex; flex-direction: column; gap: 2px; }
+.regiao-sugestao-titulo { font-size: 14px; color: var(--text); }
+.regiao-sugestao-sub { font-size: 12px; color: var(--muted); }
+
+
 </style>
 </head>
 <body>
@@ -311,7 +347,7 @@ const Q_COMPRA = [
   { pilar:"Comportamento", title:"Como você se desloca no dia a dia?", hint:"Influencia a importância de vaga, metrô e acessibilidade.", type:"multi", layout:"grid", opts:[{i:"🚗",l:"Carro próprio",s:""},{i:"🚇",l:"Metrô / ônibus",s:""},{i:"🚲",l:"Bicicleta",s:""},{i:"📱",l:"Uber / 99",s:""}] },
   { pilar:"Hábito", title:"O que você não abre mão no imóvel?", hint:"Escolha até 3 itens que são inegociáveis pra você.", type:"multi", max:3, layout:"grid", opts:[{i:"🏋️",l:"Academia no prédio",s:""},{i:"🐾",l:"Pet friendly",s:""},{i:"🅿️",l:"Vaga de garagem",s:""},{i:"🌳",l:"Área verde / lazer",s:""},{i:"🔐",l:"Segurança 24h",s:""},{i:"🏊",l:"Piscina",s:""}] },
   { pilar:"Imóvel", title:"Qual tipo de imóvel você prefere?", hint:"Ajuda a filtrar o padrão de construção e condomínio.", type:"single", layout:"grid", opts:[{i:"🏢",l:"Apartamento",s:"Condomínio vertical"},{i:"🏠",l:"Casa",s:"Horizontal / condomínio"},{i:"🏗️",l:"Lançamento",s:"Planta / pré-lançamento"},{i:"🔑",l:"Usado",s:"Pronto pra morar"}] },
-  { pilar:"Decisão", title:"Na hora H, o que pesa mais?", hint:"Seu desempatador quando dois imóveis estão próximos.", type:"single", layout:"grid", opts:[{i:"💰",l:"Preço",s:"Melhor negócio"},{i:"📍",l:"Localização",s:"Bairro e entorno"},{i:"📊",l:"Liquidez",s:"Facilidade de revenda"},{i:"🏗️",l:"Qualidade",s:"Acabamento e construtora"}] }
+  { pilar:"Prioridades", title:"O que mais importa para você nesse imóvel?", hint:"Escolha até 5 prioridades para personalizar sua busca.", type:"multi", max:5, layout:"grid", opts:[{i:"💰",l:"Preço baixo",s:"Melhor custo-benefício"},{i:"📍",l:"Boa localização",s:"Bairro e entorno"},{i:"🚇",l:"Próximo ao metrô",s:"Mobilidade"},{i:"🅿️",l:"Vaga de garagem",s:"Mais praticidade"},{i:"🏋️",l:"Academia",s:"Condomínio com estrutura"},{i:"💻",l:"Coworking",s:"Espaço para trabalho"},{i:"🏀",l:"Quadra esportiva",s:"Lazer ativo"},{i:"🌳",l:"Área de lazer",s:"Convivência e bem-estar"},{i:"🏊",l:"Piscina",s:"Lazer e conforto"},{i:"🛋️",l:"Varanda / sacada",s:"Mais área útil"},{i:"💸",l:"Condomínio baixo",s:"Menor custo fixo"},{i:"✨",l:"Imóvel novo",s:"Menos manutenção"},{i:"🔨",l:"Imóvel reformado",s:"Pronto para uso"},{i:"🤫",l:"Silêncio / rua tranquila",s:"Mais conforto"},{i:"🛡️",l:"Segurança",s:"Portaria e controle"},{i:"🐾",l:"Pet friendly",s:"Aceita pets"},{i:"🧑‍💻",l:"Espaço para home office",s:"Rotina híbrida/remota"},{i:"🏢",l:"Próximo do trabalho",s:"Menos deslocamento"},{i:"🏫",l:"Próximo de escola",s:"Facilidade para família"},{i:"📈",l:"Potencial de valorização",s:"Visão de investimento"}] }
 ];
 const Q_LOCACAO = [
   { pilar:"Região", title:"Onde você quer alugar?", hint:"Digite o bairro ou região, ou escolha uma sugestão abaixo.", type:"regiao", sugestoes:["Pinheiros","Vila Madalena","Brooklin","Moema","Lapa","Tatuapé"] },
@@ -322,7 +358,7 @@ const Q_LOCACAO = [
   { pilar:"Hábito", title:"O que você não abre mão no dia a dia?", hint:"Escolha até 3 itens essenciais pra sua rotina.", type:"multi", max:3, layout:"grid", opts:[{i:"💪",l:"Academia",s:""},{i:"🐾",l:"Pet friendly",s:""},{i:"🛵",l:"Delivery fácil",s:""},{i:"🌙",l:"Vida noturna perto",s:""},{i:"🔇",l:"Silêncio",s:""},{i:"💻",l:"Coworking",s:""}] },
   { pilar:"Hábito", title:"Como você usa sua casa?", hint:"Ajuda a priorizar área interna, varanda ou área social.", type:"single", layout:"col", opts:[{i:"😴",l:"Só durmo lá",s:"Pouco tempo em casa"},{i:"💻",l:"Trabalho em casa",s:"Preciso de espaço e silêncio"},{i:"🥂",l:"Recebo visitas",s:"Área social importa"},{i:"🛋️",l:"Fico muito em casa",s:"Conforto é prioridade"}] },
   { pilar:"Contrato", title:"Por quanto tempo pretende ficar?", hint:"Influencia o tipo de contrato e a flexibilidade negociada.", type:"single", layout:"grid", opts:[{i:"⚡",l:"Menos de 1 ano",s:"Curta temporada"},{i:"📅",l:"1 a 2 anos",s:""},{i:"🏅",l:"2 a 4 anos",s:""},{i:"♾️",l:"Mais de 4 anos",s:"Longo prazo"}] },
-  { pilar:"Decisão", title:"Na hora H, o que pesa mais?", hint:"Seu desempatador quando dois imóveis estão empatados.", type:"single", layout:"grid", opts:[{i:"💰",l:"Preço",s:"Custo-benefício"},{i:"📍",l:"Localização",s:"Bairro e entorno"},{i:"🏗️",l:"Qualidade",s:"Acabamento"},{i:"🏢",l:"Infraestrutura",s:"Prédio e amenidades"}] }
+  { pilar:"Prioridades", title:"O que mais importa para você nesse aluguel?", hint:"Escolha até 5 prioridades para personalizar sua busca.", type:"multi", max:5, layout:"grid", opts:[{i:"💰",l:"Preço baixo",s:"Custo mensal controlado"},{i:"📍",l:"Boa localização",s:"Bairro e entorno"},{i:"🚇",l:"Próximo ao metrô",s:"Mobilidade"},{i:"🅿️",l:"Vaga de garagem",s:"Mais praticidade"},{i:"🏋️",l:"Academia",s:"Condomínio com estrutura"},{i:"💻",l:"Coworking",s:"Espaço para trabalho"},{i:"🏀",l:"Quadra esportiva",s:"Lazer ativo"},{i:"🌳",l:"Área de lazer",s:"Convivência e bem-estar"},{i:"🏊",l:"Piscina",s:"Lazer e conforto"},{i:"🛋️",l:"Varanda / sacada",s:"Mais conforto"},{i:"💸",l:"Condomínio baixo",s:"Menor custo fixo"},{i:"✨",l:"Imóvel novo",s:"Menos manutenção"},{i:"🔨",l:"Imóvel reformado",s:"Pronto para entrar"},{i:"🤫",l:"Silêncio / rua tranquila",s:"Mais conforto"},{i:"🛡️",l:"Segurança",s:"Portaria e controle"},{i:"🐾",l:"Pet friendly",s:"Aceita pets"},{i:"🧑‍💻",l:"Espaço para home office",s:"Rotina híbrida/remota"},{i:"🏢",l:"Próximo do trabalho",s:"Menos deslocamento"},{i:"🏫",l:"Próximo de escola",s:"Facilidade para família"},{i:"📦",l:"Pronto para morar",s:"Sem necessidade de adaptação"}] }
 ];
 let objetivo = null, Qs = [], cur = 0, ans = [], userProfile = {}, regiaoValue = '', resultadoIA = null;
 function selecionarObjetivo(obj) {
@@ -356,14 +392,32 @@ function renderQ() {
   let inputHtml = '';
   if (q.type === 'regiao') {
     const chips = (q.sugestoes || []).map(s => `<span class="regiao-chip ${isLoc ? 'loc' : ''}" onclick="preencherRegiao('${s.replace(/'/g, "\\'")}')">${s}</span>`).join('');
-    inputHtml = `<div class="regiao-input-wrap"><span class="regiao-icon">📍</span><input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput" placeholder="Ex: Pinheiros, Vila Mariana, ABC..." value="${escapeHtml(regiaoValue)}" oninput="onRegiaoInput(this.value)" autocomplete="off"></div><div class="regiao-chips">${chips}</div>`;
+    inputHtml = `
+      <div class="regiao-autocomplete">
+        <div class="regiao-input-wrap">
+          <span class="regiao-icon">📍</span>
+          <input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput" placeholder="Ex: Pinheiros, Vila Mariana, ABC..." value="${escapeHtml(regiaoValue)}" oninput="onRegiaoInput(this.value)" autocomplete="off">
+        </div>
+        <div id="regiaoSugestoes" class="regiao-sugestoes"></div>
+      </div>
+      <div class="regiao-chips">${chips}</div>`;
   } else {
     const locClass = isLoc ? ' loc-mode' : '';
     inputHtml = `<div class="opts ${q.layout === 'grid' ? 'grid' : ''}">${q.opts.map((o, i) => `<button type="button" class="opt ${sel.includes(o.l) ? 'sel' + locClass : ''}" onclick="pick(${i})"><span class="opt-icon">${o.i}</span><span class="opt-text">${escapeHtml(o.l)}${o.s ? `<div class="opt-sub">${escapeHtml(o.s)}</div>` : ''}</span></button>`).join('')}</div>`;
   }
   const locClass = isLoc ? ' loc' : '';
   document.getElementById('qArea').innerHTML = `<div class="q-card"><div class="q-pilar${locClass}">${escapeHtml(q.pilar)}</div><h2 class="q-title">${escapeHtml(q.title)}</h2><p class="q-hint">${escapeHtml(q.hint)}</p>${q.type === 'multi' ? `<div class="multi-badge">○ Pode escolher mais de uma${q.max ? ` (máx. ${q.max})` : ''}</div>` : ''}${inputHtml}<div class="q-nav">${cur > 0 ? `<button type="button" class="btn-back" onclick="goBack()">←</button>` : ''}<button type="button" class="btn-next ${isLoc ? 'loc-mode' : ''} ${hasAnswer ? 'on' : ''}" id="btnNext" onclick="next()">${cur === Qs.length - 1 ? 'Ver meus imóveis →' : 'Continuar →'}</button></div></div>`;
-  if (q.type === 'regiao') setTimeout(() => document.getElementById('regiaoInput')?.focus(), 100);
+  if (q.type === 'regiao') {
+    setTimeout(() => {
+      const input = document.getElementById('regiaoInput');
+      if (input) {
+        input.focus();
+        input.addEventListener('focus', function() {
+          if (regiaoValue.trim()) renderRegiaoAutocomplete();
+        });
+      }
+    }, 100);
+  }
 }
 function onRegiaoInput(val) {
   regiaoValue = val;
@@ -396,13 +450,13 @@ function obterSugestoesRegiao(termo) {
   }).slice(0, 5);
 }
 function renderRegiaoAutocomplete() {
-  const box = document.getElementById('regiaoAutocomplete');
+  const box = document.getElementById('regiaoSugestoes');
   if (!box) return;
 
   const sugestoes = obterSugestoesRegiao(regiaoValue);
   if (!regiaoValue.trim() || sugestoes.length === 0) {
     box.innerHTML = '';
-    box.classList.remove('show');
+    box.style.display = 'none';
     return;
   }
 
@@ -416,13 +470,13 @@ function renderRegiaoAutocomplete() {
       </span>
     </button>
   `).join('');
-  box.classList.add('show');
+  box.style.display = 'block';
 }
 function esconderRegiaoAutocomplete() {
-  const box = document.getElementById('regiaoAutocomplete');
+  const box = document.getElementById('regiaoSugestoes');
   if (!box) return;
   setTimeout(() => {
-    box.classList.remove('show');
+    box.style.display = 'none';
   }, 120);
 }
 function pick(i) {
@@ -437,8 +491,8 @@ function next() { const q = Qs[cur], hasAnswer = q.type === 'regiao' ? regiaoVal
 function goBack() { if (cur > 0) { if (Qs[cur - 1].type === 'regiao') regiaoValue = ans[cur - 1][0] || ''; cur--; renderQ(); } }
 function buildProfileAndSearch() {
   const isCompra = objetivo === 'compra'; const regiao = ans[0][0] || 'São Paulo';
-  if (isCompra) userProfile = { objetivo:'Comprar', regiao, composicao:ans[1][0] || 'Não informado', orcamento:ans[2][0] || 'Não informado', finalidade:ans[3][0] || 'Moradia própria', mobilidade:ans[4].join(', ') || 'Não informado', must_haves:ans[5].join(', ') || 'Nenhum', tipo_imovel:ans[6][0] || 'Qualquer', prioridade:ans[7][0] || 'Localização', criterios:'Preço: 30% | Localização: 25% | Liquidez: 20% | Qualidade: 15% | Aderência ao perfil: 10%' };
-  else userProfile = { objetivo:'Alugar', regiao, composicao:ans[1][0] || 'Não informado', orcamento:ans[2][0] || 'Não informado', trabalho:ans[3][0] || 'Não informado', mobilidade:ans[4].join(', ') || 'Não informado', must_haves:ans[5].join(', ') || 'Nenhum', uso_casa:ans[6][0] || 'Não informado', permanencia:ans[7][0] || 'Indefinido', prioridade:ans[8][0] || 'Localização', criterios:'Aderência ao perfil: 30% | Localização: 25% | Qualidade: 20% | Preço: 15% | Flexibilidade: 10%' };
+  if (isCompra) userProfile = { objetivo:'Comprar', regiao, composicao:ans[1][0] || 'Não informado', orcamento:ans[2][0] || 'Não informado', finalidade:ans[3][0] || 'Moradia própria', mobilidade:ans[4].join(', ') || 'Não informado', must_haves:ans[5].join(', ') || 'Nenhum', tipo_imovel:ans[6][0] || 'Qualquer', prioridade:ans[7].join(', ') || 'Boa localização', criterios:'Preço: 30% | Localização: 25% | Liquidez: 20% | Qualidade: 15% | Aderência ao perfil: 10%' };
+  else userProfile = { objetivo:'Alugar', regiao, composicao:ans[1][0] || 'Não informado', orcamento:ans[2][0] || 'Não informado', trabalho:ans[3][0] || 'Não informado', mobilidade:ans[4].join(', ') || 'Não informado', must_haves:ans[5].join(', ') || 'Nenhum', uso_casa:ans[6][0] || 'Não informado', permanencia:ans[7][0] || 'Indefinido', prioridade:ans[8].join(', ') || 'Boa localização', criterios:'Aderência ao perfil: 30% | Localização: 25% | Qualidade: 20% | Preço: 15% | Flexibilidade: 10%' };
   show('loading'); animateLoading(); callAgent();
 }
 function animateLoading() { [0,1,2,3,4].forEach((s,i)=>{ setTimeout(()=>{ if (i>0) document.getElementById('ls'+(i-1)).className='loading-step done'; document.getElementById('ls'+s).className='loading-step active'; }, i*900); }); }
@@ -454,7 +508,7 @@ PERFIL DO CLIENTE:
 - Composição familiar: ${p.composicao}
 - Mobilidade: ${p.mobilidade}
 - Must-haves: ${p.must_haves}
-- Prioridade de decisão: ${p.prioridade}${extraCompra}${extraLocacao}
+- Prioridades do cliente: ${p.prioridade}${extraCompra}${extraLocacao}
 CRITÉRIOS DE SCORING: ${p.criterios}
 INSTRUÇÕES:
 - Crie imóveis EXCLUSIVAMENTE na região: ${p.regiao} ou arredores próximos
@@ -569,6 +623,14 @@ function montarWhatsappConsultor(im) {
 }
 function escapeHtml(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
 function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('screen-' + id).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+document.addEventListener('click', function(e) {
+  const box = document.getElementById('regiaoSugestoes');
+  const input = document.getElementById('regiaoInput');
+  if (!box || !input) return;
+  if (e.target === input || box.contains(e.target)) return;
+  box.style.display = 'none';
+});
 </script>
 </body>
 </html>
