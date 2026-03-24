@@ -3,587 +3,504 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ImobAI</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>ImobAI — Encontre seu imóvel ideal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F4F1EB;--card:#fff;--text:#1C1917;--muted:#78716C;--subtle:#A8A29E;
-  --border:#E5E0D8;--accent:#C2541A;--accent-l:#FDF0E8;--accent-m:#F0C4A8;
-  --blue:#1D4ED8;--blue-l:#EFF6FF;
-  --green:#166534;--green-l:#DCFCE7;
-  --r:16px;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F4F1EB; --card: #FFFFFF; --text: #1C1917;
+  --muted: #78716C; --subtle: #A8A29E;
+  --accent: #C2541A; --accent-hover: #A8431A;
+  --accent-light: #FDF0E8; --accent-mid: #F0C4A8;
+  --border: #E5E0D8; --green: #166534; --green-light: #DCFCE7;
+  --blue: #1D4ED8; --blue-light: #EFF6FF;
+  --radius: 18px; --radius-sm: 10px;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-
-/* TELAS */
-.tela{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem}
-.tela.on{display:flex}
-#tela-quiz,#tela-resultado{justify-content:flex-start;padding-top:2rem}
-
-/* HERO */
-.hero{max-width:460px;width:100%;text-align:center}
-.logo{font-family:'DM Serif Display',serif;font-size:3rem;letter-spacing:-.02em;margin-bottom:.5rem}
-.logo span{color:var(--accent)}
-.hero p{font-size:16px;color:var(--muted);font-weight:300;line-height:1.6;margin-bottom:2rem}
-
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
-
-.obtn{
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  padding:1.25rem 1rem;
-  border:2px solid var(--border);border-radius:var(--r);
-  background:var(--card);cursor:pointer;
-  font-family:'DM Sans',sans-serif;
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+#screen-hero { align-items: center; justify-content: center; padding: 2rem; position: relative; overflow: hidden; }
+#screen-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(194,84,26,.08) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 60% at 10% 80%, rgba(194,84,26,.05) 0%, transparent 70%);
+  pointer-events: none;
 }
-.obtn:hover{border-color:var(--accent-m);background:var(--accent-l)}
-.obtn em{font-size:2rem;font-style:normal}
-.obtn strong{font-size:15px;font-weight:500;color:var(--text)}
-.obtn small{font-size:11px;color:var(--muted);font-weight:300}
-
-/* selecionado — aplicado via JS */
-.obtn.sel-compra{border:3px solid var(--accent);background:var(--accent-l)}
-.obtn.sel-compra strong{color:var(--accent)}
-.obtn.sel-locacao{border:3px solid var(--blue);background:var(--blue-l)}
-.obtn.sel-locacao strong{color:var(--blue)}
-
-.bcomecar{
-  padding:15px 40px;background:var(--accent);color:#fff;
-  border:none;border-radius:12px;
-  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;
-  opacity:.4;pointer-events:none;
+.hero-inner { max-width: 520px; width: 100%; text-align: center; animation: fadeUp .6s ease both; position: relative; }
+.hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-light); border: 1px solid var(--accent-mid); border-radius: 99px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--accent); margin-bottom: 1.5rem; }
+.hero-logo { font-family: 'DM Serif Display', serif; font-size: clamp(2.5rem, 8vw, 4rem); color: var(--text); letter-spacing: -.03em; line-height: 1; margin-bottom: .75rem; }
+.hero-logo span { color: var(--accent); }
+.hero-sub { font-size: 17px; color: var(--muted); font-weight: 300; line-height: 1.6; margin-bottom: 2rem; max-width: 380px; margin-left: auto; margin-right: auto; }
+.hero-objetivo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 380px; margin: 0 auto 1.5rem; }
+.obj-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 1.25rem 1rem; border: 2px solid var(--border);
+  border-radius: var(--radius); background: var(--card);
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
 }
-.bcomecar.on{opacity:1;pointer-events:all}
-.bcomecar.on:hover{background:#A8431A}
-.bcomecar.azul{background:var(--blue)}
-.bcomecar.azul:hover{background:#1e40af}
-
-/* QUIZ */
-.qwrap{width:100%;max-width:540px}
-.qtopo{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
-.qlogo{font-family:'DM Serif Display',serif;font-size:1.2rem}
-.qlogo span{color:var(--accent)}
-.qlogo span.az{color:var(--blue)}
-.qdir{display:flex;align-items:center;gap:8px}
-.badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:99px}
-.badge.c{background:var(--accent-l);color:var(--accent)}
-.badge.l{background:var(--blue-l);color:var(--blue)}
-.bvoltar{background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif}
-
-.pinfo{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
-.ptrack{height:3px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:1.5rem}
-.pfill{height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
-.pfill.az{background:var(--blue)}
-
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:2rem}
-.pilar{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.pilar.az{color:var(--blue)}
-.ptitle{font-family:'DM Serif Display',serif;font-size:1.5rem;line-height:1.3;margin-bottom:6px}
-.phint{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:1.5rem;line-height:1.5}
-.maviso{font-size:11px;color:var(--muted);background:var(--bg);border-radius:99px;padding:3px 10px;display:inline-block;margin-bottom:1rem}
-
-.opts{display:flex;flex-direction:column;gap:8px}
-.opts.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.opt{display:flex;align-items:center;gap:12px;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);text-align:left;position:relative}
-.opt:hover{border-color:var(--accent-m);background:var(--accent-l)}
-.opt.sel{border-color:var(--accent);background:var(--accent-l);color:var(--accent);font-weight:500}
-.opt.sel::after{content:'✓';position:absolute;right:14px;color:var(--accent)}
-.opt.sel.az{border-color:var(--blue);background:var(--blue-l);color:var(--blue)}
-.opt.sel.az::after{color:var(--blue)}
-.oi{font-size:18px;flex-shrink:0}
-.os{font-size:11px;color:var(--muted);font-weight:300;margin-top:2px}
-
-/* regiao */
-.rwrap{position:relative;margin-bottom:8px}
-.rinput{width:100%;padding:13px 16px 13px 40px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--card);outline:none}
-.rinput:focus{border-color:var(--accent)}
-.rinput.az:focus{border-color:var(--blue)}
-.rpin{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
-.acbox{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.06);z-index:99;display:none}
-.acitem{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border);font-family:'DM Sans',sans-serif}
-.acitem:last-child{border-bottom:none}
-.acitem:hover{background:var(--accent-l)}
-.acn{font-size:14px;font-weight:500;color:var(--text);display:block}
-.acd{font-size:11px;color:var(--muted);display:block}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.chip{font-size:12px;padding:4px 12px;border:1px solid var(--border);border-radius:99px;color:var(--muted);background:var(--bg);cursor:pointer}
-.chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
-
-.nav{display:flex;gap:8px;margin-top:1.5rem}
-.bant{padding:12px 18px;border:1.5px solid var(--border);border-radius:10px;background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--muted);cursor:pointer}
-.bant:hover{border-color:var(--text);color:var(--text)}
-.bprox{flex:1;padding:14px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;opacity:.35;pointer-events:none}
-.bprox.on{opacity:1;pointer-events:all}
-.bprox.on:hover{background:#A8431A}
-.bprox.az{background:var(--blue)}
-.bprox.az.on:hover{background:#1e40af}
-
-/* LOADING */
-.linner{text-align:center;max-width:340px}
-.llogo{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:2rem}
-.llogo span{color:var(--accent)}
-.ring{width:72px;height:72px;border-radius:50%;background:var(--accent-l);border:2px solid var(--accent-m);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 2rem;animation:pulsar 1.8s ease-in-out infinite}
-@keyframes pulsar{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.lsteps{list-style:none;text-align:left}
-.lstep{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border)}
-.lstep:last-child{border-bottom:none}
-.lstep.ok{color:var(--green)}
-.lstep.at{color:var(--text);font-weight:500}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0}
-.lstep.ok .dot{background:var(--green)}
-.lstep.at .dot{background:var(--accent);animation:piscar .8s infinite}
-@keyframes piscar{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* GATE */
-.gwrap{width:100%;max-width:460px}
-.gperfil{background:var(--accent);border-radius:14px;padding:1.25rem;margin-bottom:1rem}
-.gperfil.az{background:var(--blue)}
-.gperfil h3{font-family:'DM Serif Display',serif;font-size:1.2rem;color:#fff;margin-bottom:4px}
-.gperfil p{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:10px}
-.gtags{display:flex;flex-wrap:wrap;gap:6px}
-.gtag{font-size:11px;font-weight:500;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.2);color:#fff}
-.gprev{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
-.greal{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem}
-.gnum{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px}
-.gtit{font-size:14px;font-weight:500}
-.gend{font-size:12px;color:var(--muted)}
-.gblur{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;filter:blur(4px);pointer-events:none;opacity:.6}
-.gform{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem}
-.gform h2{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:6px}
-.gform>p{font-size:13px;color:var(--muted);margin-bottom:1.25rem;line-height:1.6}
-.ginput{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--card);outline:none;margin-bottom:10px}
-.ginput:focus{border-color:var(--accent)}
-.gconsent{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
-.gconsent input{margin-top:3px;flex-shrink:0;accent-color:var(--accent)}
-.gconsent span{font-size:12px;color:var(--muted);line-height:1.6}
-.gconsent a{color:var(--accent)}
-.bliberar{width:100%;padding:14px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;margin-bottom:10px}
-.bliberar:hover{background:#A8431A}
-.glgpd{font-size:11px;color:var(--subtle);text-align:center;line-height:1.6}
-.glgpd a{color:var(--muted)}
-
-/* RESULTADO */
-.rwrap2{width:100%;max-width:580px}
-.rtopo{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
-.rlogo{font-family:'DM Serif Display',serif;font-size:1.2rem}
-.rlogo span{color:var(--accent)}
-.bnova{font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;font-family:'DM Sans',sans-serif}
-.bnova:hover{color:var(--text);border-color:var(--text)}
-.pstrip{background:var(--accent);border-radius:12px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:1.5rem}
-.pstrip.az{background:var(--blue)}
-.pstrip h3{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;margin-bottom:2px}
-.pstrip p{font-size:12px;color:rgba(255,255,255,.75)}
-.ptags{display:flex;flex-wrap:wrap;gap:6px}
-.ptag{font-size:11px;font-weight:500;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.2);color:#fff}
-.rcount{font-size:12px;color:var(--muted);margin-bottom:12px}
-.imovel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:12px}
-.imovel:hover{border-color:var(--accent-m);transform:translateY(-1px);transition:.2s}
-.itopo{display:flex;gap:12px;margin-bottom:12px}
-.rank{width:36px;height:36px;border-radius:8px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex-shrink:0}
-.rank.p{background:#78716C}
-.rank.b{background:#92400E}
-.rank.az{background:var(--blue)}
-.imeta{flex:1}
-.ititulo{font-size:15px;font-weight:500;margin-bottom:3px}
-.iend{font-size:12px;color:var(--muted)}
-.scirc{width:50px;height:50px;border-radius:50%;background:var(--accent-l);border:2px solid var(--accent-m);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
-.scirc.az{background:var(--blue-l);border-color:#93c5fd}
-.snum{font-size:15px;font-weight:500;color:var(--accent);line-height:1}
-.snum.az{color:var(--blue)}
-.slbl{font-size:8px;color:var(--muted)}
-.itags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.itag{font-size:11px;padding:3px 10px;border-radius:99px}
-.itag.m{background:var(--green-l);color:var(--green);font-weight:500}
-.itag.n{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
-.itag.pr{background:var(--text);color:#fff;font-weight:500}
-.ijust{font-size:13px;color:var(--muted);line-height:1.65;border-top:1px solid var(--border);padding-top:12px;margin-bottom:12px}
-.ijust strong{color:var(--text);font-weight:500}
-.iacoes{display:flex;gap:8px;flex-wrap:wrap}
-.bacao{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;cursor:pointer;font-family:'DM Sans',sans-serif;border:none}
-.bacao.p1{background:var(--accent);color:#fff}
-.bacao.p1.az{background:var(--blue)}
-.bacao.p1:hover{opacity:.85}
-.bacao.s1{background:transparent;color:var(--text);border:1px solid var(--border)}
-.bacao.s1:hover{border-color:var(--text)}
-.rrod{text-align:center;padding-top:1rem;font-size:12px;color:var(--subtle);line-height:1.6}
-
-@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.up{animation:up .4s ease both}
+.obj-btn:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+.obj-btn.compra:hover, .obj-btn.compra.sel { border-color: var(--accent); background: var(--accent-light); }
+.obj-btn.locacao:hover, .obj-btn.locacao.sel { border-color: var(--blue); background: var(--blue-light); }
+.obj-icon { font-size: 28px; }
+.obj-label { font-size: 15px; font-weight: 500; color: var(--text); }
+.obj-sub { font-size: 11px; color: var(--muted); }
+.obj-btn.compra.sel .obj-label { color: var(--accent); }
+.obj-btn.locacao.sel .obj-label { color: var(--blue); }
+.hero-stats { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+.stat { text-align: center; }
+.stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--text); }
+.stat-label { font-size: 11px; color: var(--subtle); margin-top: 2px; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px 32px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background .2s, transform .15s; opacity: .4; pointer-events: none; }
+.btn-primary.on { opacity: 1; pointer-events: all; }
+.btn-primary.on:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-primary.locacao-mode { background: var(--blue); }
+.btn-primary.locacao-mode:hover { background: #1e40af; }
+#screen-quiz { align-items: center; justify-content: flex-start; padding: 2rem 1rem 4rem; }
+.quiz-wrap { width: 100%; max-width: 540px; margin: 0 auto; }
+.quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.quiz-logo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--text); }
+.quiz-logo span { color: var(--accent); }
+.quiz-logo span.loc { color: var(--blue); }
+.quiz-exit { background: none; border: none; font-size: 13px; color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 6px; font-family: 'DM Sans', sans-serif; transition: color .2s; }
+.quiz-exit:hover { color: var(--text); }
+.quiz-mode-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 99px; }
+.quiz-mode-badge.compra { background: var(--accent-light); color: var(--accent); }
+.quiz-mode-badge.locacao { background: var(--blue-light); color: var(--blue); }
+.progress-wrap { margin-bottom: 2rem; }
+.progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.progress-track { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+.progress-fill.locacao { background: var(--blue); }
+.q-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 2rem; animation: fadeUp .35s ease both; }
+.q-pilar { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.q-pilar.loc { color: var(--blue); }
+.q-title { font-family: 'DM Serif Display', serif; font-size: 1.6rem; line-height: 1.25; color: var(--text); margin-bottom: 6px; }
+.q-hint { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 1.5rem; line-height: 1.5; }
+.multi-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); background: var(--bg); border-radius: 99px; padding: 3px 10px; margin-bottom: 1rem; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opts.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: transparent; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); text-align: left; transition: border-color .15s, background .15s; position: relative; }
+.opt:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+.opt.sel { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 500; }
+.opt.sel.loc-mode { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+.opt.sel::after { content: '✓'; position: absolute; right: 14px; font-size: 13px; color: var(--accent); }
+.opt.sel.loc-mode::after { color: var(--blue); }
+.opt-icon { font-size: 17px; flex-shrink: 0; }
+.opt-text { flex: 1; }
+.opt-sub { font-size: 11px; color: var(--muted); font-weight: 300; margin-top: 1px; }
+.regiao-input-wrap { position: relative; margin-bottom: 8px; }
+.regiao-input { width: 100%; padding: 13px 16px 13px 42px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--card); outline: none; transition: border-color .15s; }
+.regiao-input:focus { border-color: var(--accent); }
+.regiao-input.loc:focus { border-color: var(--blue); }
+.regiao-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+.regiao-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.regiao-chip { font-size: 12px; padding: 5px 12px; border-radius: 99px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: all .15s; }
+.regiao-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.regiao-chip.loc:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+.q-nav { display: flex; gap: 8px; margin-top: 1.5rem; }
+.btn-back { padding: 12px 18px; border: 1.5px solid var(--border); border-radius: 10px; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; transition: all .15s; }
+.btn-back:hover { border-color: var(--text); color: var(--text); }
+.btn-next { flex: 1; padding: 14px; border: none; border-radius: 10px; background: var(--accent); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all .2s; opacity: .35; pointer-events: none; }
+.btn-next.loc-mode { background: var(--blue); }
+.btn-next.on { opacity: 1; pointer-events: all; }
+.btn-next.on:hover { background: var(--accent-hover); }
+.btn-next.on.loc-mode:hover { background: #1e40af; }
+#screen-loading { align-items: center; justify-content: center; padding: 2rem; }
+.loading-inner { text-align: center; max-width: 360px; }
+.loading-logo { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--text); margin-bottom: 2rem; }
+.loading-logo span { color: var(--accent); }
+.pulse-ring { width: 72px; height: 72px; border-radius: 50%; background: var(--accent-light); border: 2px solid var(--accent-mid); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 1.5rem; animation: pulse 1.8s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:.8} }
+.loading-steps { list-style: none; text-align: left; margin-bottom: 1.5rem; }
+.loading-step { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); padding: 8px 0; border-bottom: 1px solid var(--border); transition: color .4s; }
+.loading-step:last-child { border-bottom: none; }
+.loading-step.done { color: var(--green); }
+.loading-step.done .step-dot { background: var(--green); }
+.loading-step.active { color: var(--text); font-weight: 500; }
+.loading-step.active .step-dot { background: var(--accent); animation: blink .8s ease-in-out infinite; }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background .4s; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+#screen-results { padding: 2rem 1rem 4rem; align-items: center; justify-content: flex-start; }
+.results-wrap { width: 100%; max-width: 600px; margin: 0 auto; }
+.results-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; animation: fadeUp .4s ease both; }
+.results-logo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--text); }
+.results-logo span { color: var(--accent); }
+.btn-refazer { font-size: 12px; color: var(--muted); background: none; border: 1px solid var(--border); border-radius: 8px; padding: 5px 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+.btn-refazer:hover { color: var(--text); border-color: var(--text); }
+.profile-strip { background: var(--accent); border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.5rem; animation: fadeUp .4s .1s ease both; }
+.profile-strip.locacao { background: var(--blue); }
+.profile-strip-left h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #fff; margin-bottom: 2px; }
+.profile-strip-left p { font-size: 12px; color: rgba(255,255,255,.75); font-weight: 300; }
+.profile-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.profile-tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 99px; background: rgba(255,255,255,.2); color: #fff; }
+.results-count { font-size: 12px; color: var(--muted); margin-bottom: 12px; animation: fadeUp .4s .15s ease both; }
+.imovel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 12px; transition: border-color .2s, transform .2s; animation: fadeUp .4s ease both; }
+.imovel:hover { border-color: var(--accent-mid); transform: translateY(-2px); }
+.imovel:nth-child(1){animation-delay:.2s} .imovel:nth-child(2){animation-delay:.3s} .imovel:nth-child(3){animation-delay:.4s}
+.imovel-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.rank-badge { width: 36px; height: 36px; background: var(--accent); color: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; flex-shrink: 0; }
+.rank-badge.silver{background:#78716C} .rank-badge.bronze{background:#92400E}
+.rank-badge.loc{background:var(--blue)}
+.imovel-meta { flex: 1; }
+.imovel-title { font-size: 15px; font-weight: 500; margin-bottom: 3px; }
+.imovel-addr { font-size: 12px; color: var(--muted); }
+.score-circle { width: 52px; height: 52px; border-radius: 50%; background: var(--accent-light); border: 2px solid var(--accent-mid); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.score-circle.loc { background: var(--blue-light); border-color: #93c5fd; }
+.score-num { font-size: 16px; font-weight: 500; color: var(--accent); line-height: 1; }
+.score-num.loc { color: var(--blue); }
+.score-lbl { font-size: 8px; color: var(--muted); margin-top: 1px; }
+.imovel-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.itag { font-size: 11px; padding: 3px 10px; border-radius: 99px; }
+.itag.match { background: var(--green-light); color: var(--green); font-weight: 500; }
+.itag.neutral { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+.itag.price { background: var(--text); color: #fff; font-weight: 500; }
+.imovel-justif { font-size: 13px; color: var(--muted); line-height: 1.65; border-top: 1px solid var(--border); padding-top: 12px; }
+.imovel-justif strong { color: var(--text); font-weight: 500; }
+.result-actions { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.result-link { display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;transition:opacity .2s; }
+.result-link.primary { background: var(--accent); color:#fff; }
+.result-link.secondary { background:transparent; color:var(--text); border:1px solid var(--border); }
+.result-link.loc-mode.primary { background: var(--blue); }
+.result-link:hover { opacity:.85; }
+.results-footer { text-align: center; padding-top: 1rem; animation: fadeUp .4s .5s ease both; }
+.results-footer p { font-size: 12px; color: var(--subtle); line-height: 1.6; }
+.error-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; text-align: center; }
+.error-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+.btn-retry { margin-top: 1rem; padding: 10px 24px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; }
+#screen-gate { align-items: center; justify-content: center; padding: 2rem 1rem; }
+.gate-wrap { width: 100%; max-width: 480px; margin: 0 auto; }
+.gate-preview { background: var(--accent); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem; animation: fadeUp .4s ease both; }
+.gate-preview h3 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+.gate-preview p { font-size: 13px; color: rgba(255,255,255,.8); margin-bottom: 10px; }
+.gate-preview.locacao { background: var(--blue); }
+.gate-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.gate-tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 99px; background: rgba(255,255,255,.2); color: #fff; }
+.gate-imoveis-preview { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; animation: fadeUp .4s .1s ease both; }
+.gate-imovel-blur { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; position: relative; overflow: hidden; }
+.gate-imovel-blur::after { content: ''; position: absolute; inset: 0; backdrop-filter: blur(6px); background: rgba(244,241,235,.7); border-radius: 12px; }
+.gate-imovel-real { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+.gate-lock { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 2rem; animation: fadeUp .4s .2s ease both; }
+.gate-lock h2 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; margin-bottom: 6px; }
+.gate-lock p { font-size: 13px; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.6; }
+.gate-input { width: 100%; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--card); outline: none; margin-bottom: 10px; transition: border-color .15s; }
+.gate-input:focus { border-color: var(--accent); }
+.btn-gate { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--accent); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background .2s; margin-bottom: 12px; }
+.btn-gate:hover { background: var(--accent-hover); }
+.gate-lgpd { font-size: 11px; color: var(--subtle); line-height: 1.6; text-align: center; }
+.gate-lgpd a { color: var(--muted); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 </style>
 </head>
 <body>
-
-<div class="tela on" id="tela-hero">
-  <div class="hero">
-    <h1 class="logo">imob<span>AI</span></h1>
-    <p>O que você está buscando?<br>Cada objetivo tem um questionário feito sob medida.</p>
-    <div class="grid2">
-      <button class="obtn" id="bC" onclick="escolher('compra')">
-        <em>🏠</em><strong>Comprar</strong><small>Decisão patrimonial</small>
+<div class="screen active" id="screen-hero">
+  <div class="hero-inner">
+    <div class="hero-badge">✦ Powered by IA</div>
+    <h1 class="hero-logo">imob<span>AI</span></h1>
+    <p class="hero-sub">O que você está buscando?<br>Cada objetivo tem um questionário feito sob medida.</p>
+    <div class="hero-objetivo">
+      <button class="obj-btn compra" id="btnCompra" onclick="selecionarObjetivo('compra')">
+        <span class="obj-icon">🏠</span>
+        <span class="obj-label">Comprar</span>
+        <span class="obj-sub">Decisão patrimonial</span>
       </button>
-      <button class="obtn" id="bL" onclick="escolher('locacao')">
-        <em>🔑</em><strong>Alugar</strong><small>Flexibilidade e experiência</small>
+      <button class="obj-btn locacao" id="btnLocacao" onclick="selecionarObjetivo('locacao')">
+        <span class="obj-icon">🔑</span>
+        <span class="obj-label">Alugar</span>
+        <span class="obj-sub">Flexibilidade e experiência</span>
       </button>
     </div>
-    <button class="bcomecar" id="bIniciar" onclick="comecar()">Começar busca →</button>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" id="statPergs">—</div><div class="stat-label">perguntas</div></div>
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">opções curadas</div></div>
+      <div class="stat"><div class="stat-num">2min</div><div class="stat-label">tempo médio</div></div>
+    </div>
+    <button class="btn-primary" id="btnIniciar" onclick="startQuiz()">Começar busca →</button>
   </div>
 </div>
-
-<div class="tela" id="tela-quiz">
-  <div class="qwrap">
-    <div class="qtopo">
-      <div class="qlogo">imob<span id="qspan">AI</span></div>
-      <div class="qdir">
-        <span class="badge" id="qbadge"></span>
-        <button class="bvoltar" onclick="ir('tela-hero')">← Início</button>
+<div class="screen" id="screen-quiz">
+  <div class="quiz-wrap">
+    <div class="quiz-header">
+      <div class="quiz-logo">imob<span id="logoSpan">AI</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="quiz-mode-badge" id="modeBadge"></span>
+        <button class="quiz-exit" onclick="goHome()">← Início</button>
       </div>
     </div>
-    <div class="pinfo"><span id="plabel">Pergunta 1</span><span id="ppct">0%</span></div>
-    <div class="ptrack"><div class="pfill" id="pfill" style="width:0%"></div></div>
-    <div id="qarea"></div>
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="pLabel">Pergunta 1</span>
+        <span id="pPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+    </div>
+    <div id="qArea"></div>
   </div>
 </div>
-
-<div class="tela" id="tela-loading">
-  <div class="linner">
-    <div class="llogo">imob<span>AI</span></div>
-    <div class="ring">🔍</div>
-    <ul class="lsteps">
-      <li class="lstep" id="ls0"><span class="dot"></span>Analisando seu perfil</li>
-      <li class="lstep" id="ls1"><span class="dot"></span>Mapeando a região</li>
-      <li class="lstep" id="ls2"><span class="dot"></span>Buscando opções compatíveis</li>
-      <li class="lstep" id="ls3"><span class="dot"></span>Calculando scores</li>
-      <li class="lstep" id="ls4"><span class="dot"></span>Preparando sua curadoria</li>
+<div class="screen" id="screen-loading">
+  <div class="loading-inner">
+    <div class="loading-logo">imob<span>AI</span></div>
+    <div class="pulse-ring">🔍</div>
+    <ul class="loading-steps">
+      <li class="loading-step" id="ls0"><span class="step-dot"></span>Analisando seu perfil</li>
+      <li class="loading-step" id="ls1"><span class="step-dot"></span>Mapeando a região de interesse</li>
+      <li class="loading-step" id="ls2"><span class="step-dot"></span>Buscando opções compatíveis</li>
+      <li class="loading-step" id="ls3"><span class="step-dot"></span>Calculando scores de aderência</li>
+      <li class="loading-step" id="ls4"><span class="step-dot"></span>Preparando sua curadoria</li>
     </ul>
   </div>
 </div>
-
-<div class="tela" id="tela-gate">
-  <div class="gwrap">
-    <div class="gperfil" id="gperf">
-      <h3 id="glabel">Seu perfil está pronto</h3>
-      <p id="gnota">A IA encontrou imóveis compatíveis</p>
-      <div class="gtags" id="gtags"></div>
+<div class="screen" id="screen-gate">
+  <div class="gate-wrap">
+    <div class="gate-preview" id="gatePreview">
+      <h3 id="gatePerfilLabel">Seu perfil está pronto</h3>
+      <p id="gateNota">A IA encontrou imóveis compatíveis com você</p>
+      <div class="gate-tags" id="gateTags"></div>
     </div>
-    <div class="gprev">
-      <div class="greal">
-        <div class="gnum">#1</div>
-        <div class="gtit" id="g1tit">—</div>
-        <div class="gend" id="g1end">—</div>
+    <div class="gate-imoveis-preview">
+      <div class="gate-imovel-real">
+        <div class="gate-rank">#1</div>
+        <div class="gate-title" id="gateImovel1Title">Carregando...</div>
+        <div class="gate-addr" id="gateImovel1Addr"></div>
       </div>
-      <div class="gblur"><div class="gnum">#2</div><div class="gtit">Imóvel compatível encontrado</div><div class="gend">📍 Região de interesse</div></div>
-      <div class="gblur"><div class="gnum">#3</div><div class="gtit">Imóvel compatível encontrado</div><div class="gend">📍 Região de interesse</div></div>
+      <div class="gate-imovel-blur"><div class="gate-rank">#2</div><div class="gate-title">Imóvel compatível encontrado</div><div class="gate-addr">📍 Região de interesse</div></div>
+      <div class="gate-imovel-blur"><div class="gate-rank">#3</div><div class="gate-title">Imóvel compatível encontrado</div><div class="gate-addr">📍 Região de interesse</div></div>
     </div>
-    <div class="gform">
+    <div class="gate-lock">
       <h2>Ver todos os imóveis</h2>
-      <p>Informe seu contato para receber a curadoria completa.</p>
-      <input class="ginput" type="text" id="gnome" placeholder="Seu nome">
-      <input class="ginput" type="tel" id="gwhats" placeholder="WhatsApp (ex: 11999999999)">
-      <div class="gconsent">
-        <input type="checkbox" id="gconsent">
-        <span>Autorizo o ImobAI a armazenar meus dados e compartilhá-los com corretores parceiros, conforme a <a href="/privacidade.html">Política de Privacidade</a> e a LGPD.</span>
-      </div>
-      <button class="bliberar" onclick="liberar()">Ver meus imóveis →</button>
-      <p class="glgpd">Dúvidas: <a href="mailto:fernando.cmedeiros@hotmail.com">fernando.cmedeiros@hotmail.com</a></p>
+      <p>Informe seu contato para receber a curadoria completa e ser avisado de novos imóveis compatíveis.</p>
+      <input class="gate-input" type="text" id="gateNome" placeholder="Seu nome">
+      <input class="gate-input" type="tel" id="gateWhatsapp" placeholder="WhatsApp (ex: 11999999999)">
+      <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer;">
+        <input type="checkbox" id="gateConsent" style="margin-top:3px;flex-shrink:0;accent-color:var(--accent);">
+        <span style="font-size:12px;color:var(--muted);line-height:1.6;">Autorizo o ImobAI a armazenar meus dados e compartilhá-los com corretores parceiros para contato sobre imóveis compatíveis com meu perfil, conforme a <a href="/privacidade.html" style="color:var(--accent);">Política de Privacidade</a> e a Lei Geral de Proteção de Dados (LGPD).</span>
+      </label>
+      <button class="btn-gate" onclick="liberarResultados()">Ver meus imóveis →</button>
+      <p class="gate-lgpd">Dúvidas ou exclusão de dados: <a href="mailto:fernando.cmedeiros@hotmail.com">fernando.cmedeiros@hotmail.com</a></p>
     </div>
   </div>
 </div>
-
-<div class="tela" id="tela-resultado">
-  <div class="rwrap2">
-    <div class="rtopo">
-      <div class="rlogo">imob<span>AI</span></div>
-      <button class="bnova" onclick="ir('tela-hero')">↺ Nova busca</button>
+<div class="screen" id="screen-results">
+  <div class="results-wrap">
+    <div class="results-top">
+      <div class="results-logo">imob<span>AI</span></div>
+      <button class="btn-refazer" onclick="goHome()">↺ Nova busca</button>
     </div>
-    <div id="rperfil"></div>
-    <div class="rcount" id="rcount"></div>
-    <div id="rimoveis"></div>
-    <p class="rrod">Resultados gerados por IA com base no seu perfil.</p>
+    <div id="profileStrip"></div>
+    <div class="results-count" id="resultsCount"></div>
+    <div id="imoveisArea"></div>
+    <div class="results-footer"><p>Resultados gerados por IA com base no seu perfil.<br>Use os botões para pesquisar opções parecidas ou falar com um especialista.</p></div>
   </div>
 </div>
-
 <script>
-const BAIRROS=[
-  {n:"Pinheiros",d:"Zona Oeste"},{n:"Vila Madalena",d:"Zona Oeste"},{n:"Lapa",d:"Zona Oeste"},
-  {n:"Alto de Pinheiros",d:"Zona Oeste"},{n:"Perdizes",d:"Zona Oeste"},{n:"Pompéia",d:"Zona Oeste"},
-  {n:"Butantã",d:"Zona Oeste"},{n:"Morumbi",d:"Zona Oeste"},{n:"Itaim Bibi",d:"Zona Oeste"},
-  {n:"Jardim Paulista",d:"Zona Oeste"},{n:"Cerqueira César",d:"Zona Oeste"},{n:"Vila Leopoldina",d:"Zona Oeste"},
-  {n:"Vila Mariana",d:"Zona Sul"},{n:"Moema",d:"Zona Sul"},{n:"Brooklin",d:"Zona Sul"},
-  {n:"Campo Belo",d:"Zona Sul"},{n:"Santo Amaro",d:"Zona Sul"},{n:"Jabaquara",d:"Zona Sul"},
-  {n:"Saúde",d:"Zona Sul"},{n:"Ipiranga",d:"Zona Sul"},{n:"Aclimação",d:"Zona Sul"},
-  {n:"Paraíso",d:"Zona Sul"},{n:"Liberdade",d:"Zona Sul"},{n:"Bela Vista",d:"Zona Sul"},
-  {n:"Vila Olímpia",d:"Zona Sul"},{n:"Chácara Klabin",d:"Zona Sul"},{n:"Campo Grande",d:"Zona Sul"},
-  {n:"Santana",d:"Zona Norte"},{n:"Tucuruvi",d:"Zona Norte"},{n:"Mandaqui",d:"Zona Norte"},
-  {n:"Vila Guilherme",d:"Zona Norte"},{n:"Casa Verde",d:"Zona Norte"},{n:"Limão",d:"Zona Norte"},
-  {n:"Tremembé",d:"Zona Norte"},{n:"Jaraguá",d:"Zona Norte"},{n:"Pirituba",d:"Zona Norte"},
-  {n:"Tatuapé",d:"Zona Leste"},{n:"Mooca",d:"Zona Leste"},{n:"Belém",d:"Zona Leste"},
-  {n:"Brás",d:"Zona Leste"},{n:"Carrão",d:"Zona Leste"},{n:"Vila Matilde",d:"Zona Leste"},
-  {n:"Penha",d:"Zona Leste"},{n:"Itaquera",d:"Zona Leste"},{n:"Vila Prudente",d:"Zona Leste"},
-  {n:"Centro",d:"Centro"},{n:"República",d:"Centro"},{n:"Consolação",d:"Centro"},
-  {n:"Santa Cecília",d:"Centro"},{n:"Higienópolis",d:"Centro"},{n:"Bom Retiro",d:"Centro"},
-  {n:"Santo André",d:"ABC"},{n:"São Bernardo do Campo",d:"ABC"},{n:"São Caetano do Sul",d:"ABC"},
-  {n:"Guarulhos",d:"Grande SP"},{n:"Osasco",d:"Grande SP"},{n:"Barueri",d:"Grande SP"},
-  {n:"Alphaville",d:"Grande SP"},{n:"Cotia",d:"Grande SP"},{n:"Taboão da Serra",d:"Grande SP"},
-  {n:"Campinas",d:"Interior"},{n:"Sorocaba",d:"Interior"},{n:"Santos",d:"Litoral"},
-  {n:"Vila Natal",d:"Zona Leste"},{n:"Vila Carrão",d:"Zona Leste"},{n:"Mirandópolis",d:"Zona Sul"},
+const Q_COMPRA = [
+  { pilar:"Região", title:"Onde você quer comprar?", hint:"Digite o bairro ou região, ou escolha uma sugestão abaixo.", type:"regiao", sugestoes:["Pinheiros","Vila Mariana","Moema","Santana","Santo André","Campinas"] },
+  { pilar:"Perfil", title:"Com quem você vai morar?", hint:"Define o tamanho ideal e as áreas prioritárias do imóvel.", type:"single", layout:"grid", opts:[{i:"🧍",l:"Sozinho",s:""},{i:"👫",l:"Casal",s:"Sem filhos"},{i:"👨‍👩‍👧",l:"Família",s:"Com filhos"},{i:"🤝",l:"Roommates",s:"Moradia compartilhada"}] },
+  { pilar:"Financeiro", title:"Qual seu orçamento de compra?", hint:"Valor total do imóvel — incluindo entrada e financiamento.", type:"single", layout:"col", opts:[{i:"💚",l:"Até R$ 300 mil",s:""},{i:"💛",l:"R$ 300 – 600 mil",s:""},{i:"🧡",l:"R$ 600 mil – 1 mi",s:""},{i:"❤️",l:"Acima de R$ 1 milhão",s:""}] },
+  { pilar:"Patrimônio", title:"Qual é o objetivo desta compra?", hint:"Isso muda completamente o critério de scoring do imóvel.", type:"single", layout:"col", opts:[{i:"🏡",l:"Moradia própria",s:"Quero morar nele"},{i:"📈",l:"Investimento",s:"Renda ou valorização"},{i:"🔄",l:"Ambos",s:"Morar e valorizar"}] },
+  { pilar:"Comportamento", title:"Como você se desloca no dia a dia?", hint:"Influencia a importância de vaga, metrô e acessibilidade.", type:"multi", layout:"grid", opts:[{i:"🚗",l:"Carro próprio",s:""},{i:"🚇",l:"Metrô / ônibus",s:""},{i:"🚲",l:"Bicicleta",s:""},{i:"📱",l:"Uber / 99",s:""}] },
+  { pilar:"Hábito", title:"O que você não abre mão no imóvel?", hint:"Escolha até 3 itens que são inegociáveis pra você.", type:"multi", max:3, layout:"grid", opts:[{i:"🏋️",l:"Academia no prédio",s:""},{i:"🐾",l:"Pet friendly",s:""},{i:"🅿️",l:"Vaga de garagem",s:""},{i:"🌳",l:"Área verde / lazer",s:""},{i:"🔐",l:"Segurança 24h",s:""},{i:"🏊",l:"Piscina",s:""}] },
+  { pilar:"Imóvel", title:"Qual tipo de imóvel você prefere?", hint:"Ajuda a filtrar o padrão de construção e condomínio.", type:"single", layout:"grid", opts:[{i:"🏢",l:"Apartamento",s:"Condomínio vertical"},{i:"🏠",l:"Casa",s:"Horizontal / condomínio"},{i:"🏗️",l:"Lançamento",s:"Planta / pré-lançamento"},{i:"🔑",l:"Usado",s:"Pronto pra morar"}] },
+  { pilar:"Decisão", title:"Na hora H, o que pesa mais?", hint:"Seu desempatador quando dois imóveis estão próximos.", type:"single", layout:"grid", opts:[{i:"💰",l:"Preço",s:"Melhor negócio"},{i:"📍",l:"Localização",s:"Bairro e entorno"},{i:"📊",l:"Liquidez",s:"Facilidade de revenda"},{i:"🏗️",l:"Qualidade",s:"Acabamento e construtora"}] }
 ];
-
-const QC=[
-  {p:"Região",t:"Onde você quer comprar?",h:"Digite o bairro ou escolha uma sugestão.",tipo:"reg",chips:["Pinheiros","Vila Mariana","Moema","Santana","Santo André"]},
-  {p:"Perfil",t:"Com quem vai morar?",h:"Define o tamanho ideal.",tipo:"1",g:true,opts:[{i:"🧍",l:"Sozinho"},{i:"👫",l:"Casal"},{i:"👨‍👩‍👧",l:"Família"},{i:"🤝",l:"Roommates"}]},
-  {p:"Financeiro",t:"Qual seu orçamento?",h:"Valor total incluindo entrada.",tipo:"1",opts:[{i:"💚",l:"Até R$ 300 mil"},{i:"💛",l:"R$ 300–600 mil"},{i:"🧡",l:"R$ 600 mil–1 mi"},{i:"❤️",l:"Acima de R$ 1 mi"}]},
-  {p:"Objetivo",t:"Finalidade da compra?",h:"Muda os critérios de avaliação.",tipo:"1",opts:[{i:"🏡",l:"Moradia própria"},{i:"📈",l:"Investimento"},{i:"🔄",l:"Ambos"}]},
-  {p:"Mobilidade",t:"Como se desloca?",h:"Pode escolher mais de um.",tipo:"m",g:true,opts:[{i:"🚗",l:"Carro"},{i:"🚇",l:"Metrô/ônibus"},{i:"🚲",l:"Bicicleta"},{i:"📱",l:"Uber/99"}]},
-  {p:"Hábito",t:"O que não abre mão?",h:"Até 3 itens.",tipo:"m",max:3,g:true,opts:[{i:"🏋️",l:"Academia"},{i:"🐾",l:"Pet friendly"},{i:"🅿️",l:"Vaga"},{i:"🌳",l:"Área verde"},{i:"🔐",l:"Segurança 24h"},{i:"🏊",l:"Piscina"}]},
-  {p:"Imóvel",t:"Qual tipo prefere?",h:"Filtra padrão e construtora.",tipo:"1",g:true,opts:[{i:"🏢",l:"Apartamento"},{i:"🏠",l:"Casa"},{i:"🏗️",l:"Lançamento"},{i:"🔑",l:"Usado"}]},
-  {p:"Decisão",t:"O que pesa mais?",h:"Seu desempatador final.",tipo:"1",g:true,opts:[{i:"💰",l:"Preço"},{i:"📍",l:"Localização"},{i:"📊",l:"Liquidez"},{i:"🏗️",l:"Qualidade"}]},
+const Q_LOCACAO = [
+  { pilar:"Região", title:"Onde você quer alugar?", hint:"Digite o bairro ou região, ou escolha uma sugestão abaixo.", type:"regiao", sugestoes:["Pinheiros","Vila Madalena","Brooklin","Moema","Lapa","Tatuapé"] },
+  { pilar:"Perfil", title:"Com quem você vai morar?", hint:"Define tamanho e tipo de imóvel mais adequado.", type:"single", layout:"grid", opts:[{i:"🧍",l:"Sozinho",s:""},{i:"👫",l:"Casal",s:"Sem filhos"},{i:"👨‍👩‍👧",l:"Família",s:"Com filhos"},{i:"🤝",l:"Roommates",s:"Dividindo o aluguel"}] },
+  { pilar:"Financeiro", title:"Qual seu orçamento mensal de aluguel?", hint:"Considere só o aluguel — sem condomínio e IPTU.", type:"single", layout:"col", opts:[{i:"💚",l:"Até R$ 2.000",s:""},{i:"💛",l:"R$ 2.000 – R$ 4.000",s:""},{i:"🧡",l:"R$ 4.000 – R$ 7.000",s:""},{i:"❤️",l:"Acima de R$ 7.000",s:""}] },
+  { pilar:"Comportamento", title:"Qual é sua rotina de trabalho?", hint:"Impacta a necessidade de home office e proximidade ao trabalho.", type:"single", layout:"col", opts:[{i:"🏢",l:"100% presencial",s:""},{i:"🔄",l:"Híbrido",s:"Alguns dias em casa"},{i:"🏡",l:"100% remoto",s:"Trabalho de casa"},{i:"💼",l:"Autônomo",s:"Horários flexíveis"}] },
+  { pilar:"Comportamento", title:"Como você se desloca no dia a dia?", hint:"Define a importância de metrô, vaga e ciclovia.", type:"multi", layout:"grid", opts:[{i:"🚗",l:"Carro próprio",s:""},{i:"🚇",l:"Metrô / ônibus",s:""},{i:"🚲",l:"Bicicleta",s:""},{i:"📱",l:"Uber / 99",s:""}] },
+  { pilar:"Hábito", title:"O que você não abre mão no dia a dia?", hint:"Escolha até 3 itens essenciais pra sua rotina.", type:"multi", max:3, layout:"grid", opts:[{i:"💪",l:"Academia",s:""},{i:"🐾",l:"Pet friendly",s:""},{i:"🛵",l:"Delivery fácil",s:""},{i:"🌙",l:"Vida noturna perto",s:""},{i:"🔇",l:"Silêncio",s:""},{i:"💻",l:"Coworking",s:""}] },
+  { pilar:"Hábito", title:"Como você usa sua casa?", hint:"Ajuda a priorizar área interna, varanda ou área social.", type:"single", layout:"col", opts:[{i:"😴",l:"Só durmo lá",s:"Pouco tempo em casa"},{i:"💻",l:"Trabalho em casa",s:"Preciso de espaço e silêncio"},{i:"🥂",l:"Recebo visitas",s:"Área social importa"},{i:"🛋️",l:"Fico muito em casa",s:"Conforto é prioridade"}] },
+  { pilar:"Contrato", title:"Por quanto tempo pretende ficar?", hint:"Influencia o tipo de contrato e a flexibilidade negociada.", type:"single", layout:"grid", opts:[{i:"⚡",l:"Menos de 1 ano",s:"Curta temporada"},{i:"📅",l:"1 a 2 anos",s:""},{i:"🏅",l:"2 a 4 anos",s:""},{i:"♾️",l:"Mais de 4 anos",s:"Longo prazo"}] },
+  { pilar:"Decisão", title:"Na hora H, o que pesa mais?", hint:"Seu desempatador quando dois imóveis estão empatados.", type:"single", layout:"grid", opts:[{i:"💰",l:"Preço",s:"Custo-benefício"},{i:"📍",l:"Localização",s:"Bairro e entorno"},{i:"🏗️",l:"Qualidade",s:"Acabamento"},{i:"🏢",l:"Infraestrutura",s:"Prédio e amenidades"}] }
 ];
-const QL=[
-  {p:"Região",t:"Onde você quer alugar?",h:"Digite o bairro ou escolha uma sugestão.",tipo:"reg",chips:["Pinheiros","Vila Madalena","Brooklin","Moema","Lapa","Tatuapé"]},
-  {p:"Perfil",t:"Com quem vai morar?",h:"Define o tamanho ideal.",tipo:"1",g:true,opts:[{i:"🧍",l:"Sozinho"},{i:"👫",l:"Casal"},{i:"👨‍👩‍👧",l:"Família"},{i:"🤝",l:"Roommates"}]},
-  {p:"Financeiro",t:"Qual seu orçamento mensal?",h:"Só o aluguel, sem condomínio.",tipo:"1",opts:[{i:"💚",l:"Até R$ 2.000"},{i:"💛",l:"R$ 2.000–4.000"},{i:"🧡",l:"R$ 4.000–7.000"},{i:"❤️",l:"Acima de R$ 7.000"}]},
-  {p:"Trabalho",t:"Sua rotina de trabalho?",h:"Influencia localização e home office.",tipo:"1",opts:[{i:"🏢",l:"Presencial"},{i:"🔄",l:"Híbrido"},{i:"🏡",l:"Remoto"},{i:"💼",l:"Autônomo"}]},
-  {p:"Mobilidade",t:"Como se desloca?",h:"Pode escolher mais de um.",tipo:"m",g:true,opts:[{i:"🚗",l:"Carro"},{i:"🚇",l:"Metrô/ônibus"},{i:"🚲",l:"Bicicleta"},{i:"📱",l:"Uber/99"}]},
-  {p:"Hábito",t:"O que não abre mão?",h:"Até 3 itens.",tipo:"m",max:3,g:true,opts:[{i:"💪",l:"Academia"},{i:"🐾",l:"Pet friendly"},{i:"🛵",l:"Delivery"},{i:"🌙",l:"Vida noturna"},{i:"🔇",l:"Silêncio"},{i:"💻",l:"Coworking"}]},
-  {p:"Uso",t:"Como usa sua casa?",h:"Define o que importa mais.",tipo:"1",opts:[{i:"😴",l:"Só durmo lá"},{i:"💻",l:"Trabalho em casa"},{i:"🥂",l:"Recebo visitas"},{i:"🛋️",l:"Fico muito em casa"}]},
-  {p:"Contrato",t:"Por quanto tempo?",h:"Influencia o tipo de contrato.",tipo:"1",g:true,opts:[{i:"⚡",l:"Menos de 1 ano"},{i:"📅",l:"1 a 2 anos"},{i:"🏅",l:"2 a 4 anos"},{i:"♾️",l:"Mais de 4 anos"}]},
-  {p:"Decisão",t:"O que pesa mais?",h:"Seu desempatador final.",tipo:"1",g:true,opts:[{i:"💰",l:"Preço"},{i:"📍",l:"Localização"},{i:"🏗️",l:"Qualidade"},{i:"🏢",l:"Infraestrutura"}]},
-];
-
-let OBJ=null,QS=[],cur=0,R=[],regVal='',IA=null,P={};
-
-// HERO
-function escolher(o){
-  OBJ=o;
-  const bc=document.getElementById('bC');
-  const bl=document.getElementById('bL');
-  bc.className='obtn'+(o==='compra'?' sel-compra':'');
-  bl.className='obtn'+(o==='locacao'?' sel-locacao':'');
-  const b=document.getElementById('bIniciar');
-  b.className='bcomecar on'+(o==='locacao'?' azul':'');
+let objetivo = null, Qs = [], cur = 0, ans = [], userProfile = {}, regiaoValue = '', resultadoIA = null;
+function selecionarObjetivo(obj) {
+  objetivo = obj;
+  document.getElementById('btnCompra').classList.toggle('sel', obj === 'compra');
+  document.getElementById('btnLocacao').classList.toggle('sel', obj === 'locacao');
+  const btn = document.getElementById('btnIniciar');
+  btn.classList.add('on');
+  btn.classList.toggle('locacao-mode', obj === 'locacao');
+  Qs = obj === 'compra' ? Q_COMPRA : Q_LOCACAO;
+  document.getElementById('statPergs').textContent = Qs.length;
 }
-
-function comecar(){
-  if(!OBJ){alert('Selecione Comprar ou Alugar.');return}
-  QS=OBJ==='compra'?QC:QL;
-  cur=0;R=QS.map(()=>[]);regVal='';
-  const az=OBJ==='locacao';
-  document.getElementById('qspan').className=az?'az':'';
-  document.getElementById('qbadge').textContent=az?'🔑 Locação':'🏠 Compra';
-  document.getElementById('qbadge').className='badge '+(az?'l':'c');
-  document.getElementById('pfill').className='pfill'+(az?' az':'');
-  ir('tela-quiz');rQ();
+function goHome() { show('hero'); }
+function startQuiz() {
+  if (!objetivo) return;
+  cur = 0; ans = Qs.map(() => []); regiaoValue = ''; resultadoIA = null;
+  const isLoc = objetivo === 'locacao';
+  document.getElementById('logoSpan').className = isLoc ? 'loc' : '';
+  document.getElementById('pFill').className = 'progress-fill' + (isLoc ? ' locacao' : '');
+  const badge = document.getElementById('modeBadge');
+  badge.textContent = isLoc ? '🔑 Locação' : '🏠 Compra';
+  badge.className = 'quiz-mode-badge ' + (isLoc ? 'locacao' : 'compra');
+  show('quiz'); renderQ();
 }
-
-// QUIZ
-function rQ(){
-  const q=QS[cur],s=R[cur],az=OBJ==='locacao';
-  const pct=Math.round(((cur+1)/QS.length)*100);
-  const ok=q.tipo==='reg'?regVal.trim().length>0:s.length>0;
-  document.getElementById('pfill').style.width=pct+'%';
-  document.getElementById('plabel').textContent=`Pergunta ${cur+1} de ${QS.length}`;
-  document.getElementById('ppct').textContent=pct+'%';
-
-  let body='';
-  if(q.tipo==='reg'){
-    const cs=(q.chips||[]).map(c=>`<span class="chip" onclick="setR('${c}')">${c}</span>`).join('');
-    body=`<div style="position:relative" id="rw">
-      <span class="rpin">📍</span>
-      <input class="rinput${az?' az':''}" id="ri" type="text" placeholder="Ex: Pinheiros, Vila Mariana..." value="${E(regVal)}" autocomplete="off" oninput="onR(this.value)">
-      <div class="acbox" id="acb"></div>
-    </div>
-    <div class="chips">${cs}</div>`;
+function renderQ() {
+  const q = Qs[cur], sel = ans[cur], pct = Math.round(((cur + 1) / Qs.length) * 100), isLoc = objetivo === 'locacao';
+  const hasAnswer = q.type === 'regiao' ? regiaoValue.trim().length > 0 : sel.length > 0;
+  document.getElementById('pFill').style.width = pct + '%';
+  document.getElementById('pLabel').textContent = `Pergunta ${cur + 1} de ${Qs.length}`;
+  document.getElementById('pPct').textContent = pct + '%';
+  let inputHtml = '';
+  if (q.type === 'regiao') {
+    const chips = (q.sugestoes || []).map(s => `<span class="regiao-chip ${isLoc ? 'loc' : ''}" onclick="preencherRegiao('${s.replace(/'/g, "\\'")}')">${s}</span>`).join('');
+    inputHtml = `<div class="regiao-input-wrap"><span class="regiao-icon">📍</span><input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput" placeholder="Ex: Pinheiros, Vila Mariana, ABC..." value="${escapeHtml(regiaoValue)}" oninput="onRegiaoInput(this.value)" autocomplete="off"></div><div class="regiao-chips">${chips}</div>`;
   } else {
-    body=`<div class="opts${q.g?' g':''}">${
-      q.opts.map((o,i)=>`<button class="opt${s.includes(o.l)?(' sel'+(az?' az':''))':''}" onclick="pick(${i})">
-        <span class="oi">${o.i}</span>
-        <span><span>${E(o.l)}</span></span>
-      </button>`).join('')
-    }</div>`;
+    const locClass = isLoc ? ' loc-mode' : '';
+    inputHtml = `<div class="opts ${q.layout === 'grid' ? 'grid' : ''}">${q.opts.map((o, i) => `<button type="button" class="opt ${sel.includes(o.l) ? 'sel' + locClass : ''}" onclick="pick(${i})"><span class="opt-icon">${o.i}</span><span class="opt-text">${escapeHtml(o.l)}${o.s ? `<div class="opt-sub">${escapeHtml(o.s)}</div>` : ''}</span></button>`).join('')}</div>`;
   }
-
-  document.getElementById('qarea').innerHTML=`<div class="card up">
-    <div class="pilar${az?' az':''}">${E(q.p)}</div>
-    <h2 class="ptitle">${E(q.t)}</h2>
-    <p class="phint">${E(q.h)}</p>
-    ${q.tipo==='m'?`<span class="maviso">Pode escolher mais de um${q.max?` (máx. ${q.max})`:''}</span>`:''}
-    ${body}
-    <div class="nav">
-      ${cur>0?`<button class="bant" onclick="ant()">←</button>`:''}
-      <button class="bprox${az?' az':''} ${ok?'on':''}" id="bp" onclick="prox()">
-        ${cur===QS.length-1?'Ver meus imóveis →':'Continuar →'}
-      </button>
-    </div>
-  </div>`;
-
-  if(q.tipo==='reg') setTimeout(()=>{const el=document.getElementById('ri');if(el)el.focus();},80);
+  const locClass = isLoc ? ' loc' : '';
+  document.getElementById('qArea').innerHTML = `<div class="q-card"><div class="q-pilar${locClass}">${escapeHtml(q.pilar)}</div><h2 class="q-title">${escapeHtml(q.title)}</h2><p class="q-hint">${escapeHtml(q.hint)}</p>${q.type === 'multi' ? `<div class="multi-badge">○ Pode escolher mais de uma${q.max ? ` (máx. ${q.max})` : ''}</div>` : ''}${inputHtml}<div class="q-nav">${cur > 0 ? `<button type="button" class="btn-back" onclick="goBack()">←</button>` : ''}<button type="button" class="btn-next ${isLoc ? 'loc-mode' : ''} ${hasAnswer ? 'on' : ''}" id="btnNext" onclick="next()">${cur === Qs.length - 1 ? 'Ver meus imóveis →' : 'Continuar →'}</button></div></div>`;
+  if (q.type === 'regiao') setTimeout(() => document.getElementById('regiaoInput')?.focus(), 100);
 }
-
-function onR(v){
-  regVal=v;
-  const bp=document.getElementById('bp');
-  if(bp) bp.classList.toggle('on',v.trim().length>0);
-  const box=document.getElementById('acb');
-  if(!box)return;
-  const hits=BAIRROS.filter(x=>norm(x.n).includes(norm(v))||norm(x.d).includes(norm(v))).slice(0,6);
-  if(!v.trim()||!hits.length){box.style.display='none';return}
-  const az=OBJ==='locacao';
-  box.innerHTML=hits.map(x=>`<div class="acitem" onclick="setR('${x.n.replace(/'/g,"\\'")}')">
-    <span>📍</span><span><span class="acn">${x.n}</span><span class="acd">${x.d} · SP</span></span>
-  </div>`).join('');
-  box.style.display='block';
-}
-
-function setR(v){
-  regVal=v;
-  const el=document.getElementById('ri');if(el)el.value=v;
-  const bp=document.getElementById('bp');if(bp)bp.classList.add('on');
-  setTimeout(()=>{const b=document.getElementById('acb');if(b)b.style.display='none';},100);
-}
-
-function pick(i){
-  const q=QS[cur],l=q.opts[i].l;
-  if(q.tipo==='1'){R[cur]=[l];}
-  else{
-    const x=R[cur].indexOf(l);
-    if(x>-1)R[cur].splice(x,1);
-    else{if(q.max&&R[cur].length>=q.max)return;R[cur].push(l);}
+function onRegiaoInput(val) { regiaoValue = val; const btn = document.getElementById('btnNext'); if (btn) btn.classList.toggle('on', val.trim().length > 0); }
+function preencherRegiao(val) { regiaoValue = val; const input = document.getElementById('regiaoInput'); if (input) input.value = val; const btn = document.getElementById('btnNext'); if (btn) btn.classList.add('on'); }
+function pick(i) {
+  const q = Qs[cur], label = q.opts[i].l;
+  if (q.type === 'single') ans[cur] = [label]; else {
+    const idx = ans[cur].indexOf(label);
+    if (idx > -1) ans[cur].splice(idx, 1); else { if (q.max && ans[cur].length >= q.max) return; ans[cur].push(label); }
   }
-  rQ();
+  renderQ();
 }
-
-function prox(){
-  const q=QS[cur],ok=q.tipo==='reg'?regVal.trim().length>0:R[cur].length>0;
-  if(!ok)return;
-  if(q.tipo==='reg')R[cur]=[regVal.trim()];
-  cur++;
-  if(cur>=QS.length){buscar();return;}
-  rQ();window.scrollTo({top:0,behavior:'smooth'});
+function next() { const q = Qs[cur], hasAnswer = q.type === 'regiao' ? regiaoValue.trim().length > 0 : ans[cur].length > 0; if (!hasAnswer) return; if (q.type === 'regiao') ans[cur] = [regiaoValue.trim()]; cur++; if (cur >= Qs.length) { buildProfileAndSearch(); return; } renderQ(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function goBack() { if (cur > 0) { if (Qs[cur - 1].type === 'regiao') regiaoValue = ans[cur - 1][0] || ''; cur--; renderQ(); } }
+function buildProfileAndSearch() {
+  const isCompra = objetivo === 'compra'; const regiao = ans[0][0] || 'São Paulo';
+  if (isCompra) userProfile = { objetivo:'Comprar', regiao, composicao:ans[1][0] || 'Não informado', orcamento:ans[2][0] || 'Não informado', finalidade:ans[3][0] || 'Moradia própria', mobilidade:ans[4].join(', ') || 'Não informado', must_haves:ans[5].join(', ') || 'Nenhum', tipo_imovel:ans[6][0] || 'Qualquer', prioridade:ans[7][0] || 'Localização', criterios:'Preço: 30% | Localização: 25% | Liquidez: 20% | Qualidade: 15% | Aderência ao perfil: 10%' };
+  else userProfile = { objetivo:'Alugar', regiao, composicao:ans[1][0] || 'Não informado', orcamento:ans[2][0] || 'Não informado', trabalho:ans[3][0] || 'Não informado', mobilidade:ans[4].join(', ') || 'Não informado', must_haves:ans[5].join(', ') || 'Nenhum', uso_casa:ans[6][0] || 'Não informado', permanencia:ans[7][0] || 'Indefinido', prioridade:ans[8][0] || 'Localização', criterios:'Aderência ao perfil: 30% | Localização: 25% | Qualidade: 20% | Preço: 15% | Flexibilidade: 10%' };
+  show('loading'); animateLoading(); callAgent();
 }
-function ant(){
-  if(cur>0){if(QS[cur-1].tipo==='reg')regVal=R[cur-1][0]||'';cur--;rQ();}
-}
-
-// BUSCA
-function buscar(){
-  const c=OBJ==='compra',reg=R[0][0]||'São Paulo';
-  P=c?{objetivo:'Comprar',regiao:reg,composicao:R[1][0]||'—',orcamento:R[2][0]||'—',
-    finalidade:R[3][0]||'—',mobilidade:R[4].join(', ')||'—',must:R[5].join(', ')||'—',
-    tipo:R[6][0]||'—',prioridade:R[7][0]||'—',
-    crit:'Preço:30% | Localização:25% | Liquidez:20% | Qualidade:15% | Aderência:10%'}
-  :{objetivo:'Alugar',regiao:reg,composicao:R[1][0]||'—',orcamento:R[2][0]||'—',
-    trabalho:R[3][0]||'—',mobilidade:R[4].join(', ')||'—',must:R[5].join(', ')||'—',
-    uso:R[6][0]||'—',permanencia:R[7][0]||'—',prioridade:R[8][0]||'—',
-    crit:'Aderência:30% | Localização:25% | Qualidade:20% | Preço:15% | Flexibilidade:10%'};
-  ir('tela-loading');anim();chamarIA();
-}
-
-function anim(){
-  [0,1,2,3,4].forEach((n,i)=>setTimeout(()=>{
-    if(i>0)document.getElementById('ls'+(i-1)).className='lstep ok';
-    document.getElementById('ls'+n).className='lstep at';
-  },i*900));
-}
-
-async function chamarIA(){
-  const p=P,az=OBJ==='locacao';
-  const ex=az?`\n- Trabalho: ${p.trabalho}\n- Uso: ${p.uso}\n- Permanência: ${p.permanencia}\n- Aluguel: ${p.orcamento}`
-    :`\n- Finalidade: ${p.finalidade}\n- Tipo: ${p.tipo}\n- Orçamento: ${p.orcamento}`;
-  const sys=`Você é o ImobAI, especialista em imóveis no Brasil.
-Retorne 3 imóveis fictícios mas realistas para a região informada.
-PERFIL:
+function animateLoading() { [0,1,2,3,4].forEach((s,i)=>{ setTimeout(()=>{ if (i>0) document.getElementById('ls'+(i-1)).className='loading-step done'; document.getElementById('ls'+s).className='loading-step active'; }, i*900); }); }
+async function callAgent() {
+  const p = userProfile, isLoc = objetivo === 'locacao';
+  const extraCompra = p.objetivo === 'Comprar' ? `\n- Finalidade: ${p.finalidade}\n- Tipo de imóvel: ${p.tipo_imovel}\n- Orçamento total: ${p.orcamento}` : '';
+  const extraLocacao = p.objetivo === 'Alugar' ? `\n- Rotina de trabalho: ${p.trabalho}\n- Como usa a casa: ${p.uso_casa}\n- Tempo de permanência: ${p.permanencia}\n- Orçamento mensal: ${p.orcamento}/mês` : '';
+  const system = `Você é o ImobAI, especialista em curadoria de imóveis no Brasil.
+Analise o perfil do cliente e retorne 3 imóveis fictícios mas altamente realistas, compatíveis com o perfil.
+PERFIL DO CLIENTE:
 - Objetivo: ${p.objetivo}
-- Região: ${p.regiao}, SP
-- Composição: ${p.composicao}
+- Região de interesse: ${p.regiao} — São Paulo
+- Composição familiar: ${p.composicao}
 - Mobilidade: ${p.mobilidade}
-- Must-haves: ${p.must}
-- Prioridade: ${p.prioridade}${ex}
-SCORING: ${p.crit}
-- Imóveis EXCLUSIVAMENTE em ${p.regiao} ou arredores diretos
-- tags_match: até 3 atributos que batem com o perfil
-- tags_neutro: até 3 características gerais
-JSON sem markdown:
-{"label":"perfil 3 palavras","tags":["t1","t2","t3"],"nota":"frase curta","imoveis":[{"rank":1,"titulo":"Tipo + bairro","endereco":"Rua, ${p.regiao} — SP","preco":"${az?'R$ X.XXX/mês':'R$ XXX.XXX'}","score":92,"tags_match":["m1","m2"],"tags_neutro":["2q","65m²"],"justificativa":"Texto. <strong>Destaque</strong> algo."}]}`;
-  try{
-    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({system:sys,userMessage:'Busque os 3 melhores imóveis.',
-        lead:{objetivo:p.objetivo,regiao:p.regiao,composicao:p.composicao,orcamento:p.orcamento,must:p.must,prioridade:p.prioridade}})});
-    const d=await res.json();
-    const r=JSON.parse((d.content?.[0]?.text||'').replace(/```json|```/g,'').trim());
-    setTimeout(()=>{document.getElementById('ls4').className='lstep ok';setTimeout(()=>gate(r),400);},4600);
-  }catch(e){setTimeout(()=>erro(),4600);}
+- Must-haves: ${p.must_haves}
+- Prioridade de decisão: ${p.prioridade}${extraCompra}${extraLocacao}
+CRITÉRIOS DE SCORING: ${p.criterios}
+INSTRUÇÕES:
+- Crie imóveis EXCLUSIVAMENTE na região: ${p.regiao} ou arredores próximos
+- Score de 0-100 baseado nos critérios ponderados
+- Tags match: atributos que batem com o perfil (máx 3)
+- Tags neutro: características gerais do imóvel (máx 3)
+- Justificativa: 2 frases personalizadas citando elementos do perfil e da região
+Retorne SOMENTE este JSON, sem markdown:
+{
+  "perfil_label": "nome do perfil em 3 palavras",
+  "perfil_tags": ["tag1","tag2","tag3"],
+  "imoveis": [
+    {
+      "rank": 1,
+      "titulo": "Tipo + bairro específico",
+      "endereco": "Rua realista, ${p.regiao} — São Paulo",
+      "preco": "${isLoc ? 'R$ X.XXX/mês' : 'R$ XXX.XXX'}",
+      "score": 94,
+      "tags_match": ["match1","match2"],
+      "tags_neutro": ["2 quartos","65m²","reformado"],
+      "justificativa": "Justificativa personalizada. <strong>Destaque</strong> o ponto mais relevante."
+    }
+  ],
+  "nota": "Uma frase do agente sobre a busca na região"
+}`;
+  try {
+    const res = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ system, userMessage:'Busque os 3 melhores imóveis para este perfil.', lead:{ objetivo:userProfile.objetivo, regiao:userProfile.regiao, composicao:userProfile.composicao, orcamento:userProfile.orcamento, must_haves:userProfile.must_haves, prioridade:userProfile.prioridade } }) });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || ''; const clean = raw.replace(/```json|```/g, '').trim(); const result = JSON.parse(clean);
+    setTimeout(()=>{ document.getElementById('ls4').className = 'loading-step done'; setTimeout(()=>renderResults(result), 400); }, 4600);
+  } catch (e) { console.error('Erro ao chamar /api/chat:', e); setTimeout(()=>renderError(), 4600); }
 }
-
-// GATE
-function gate(d){
-  IA=d;const az=OBJ==='locacao';
-  document.getElementById('gperf').className='gperfil'+(az?' az':'');
-  document.getElementById('glabel').textContent=d.label||'Seu Perfil';
-  document.getElementById('gnota').textContent=d.nota||'Curadoria pronta';
-  document.getElementById('gtags').innerHTML=[az?'🔑 Locação':'🏠 Compra','📍 '+P.regiao,...(d.tags||[])].map(t=>`<span class="gtag">${E(t)}</span>`).join('');
-  if(d.imoveis?.[0]){document.getElementById('g1tit').textContent=d.imoveis[0].titulo;document.getElementById('g1end').textContent='📍 '+d.imoveis[0].endereco;}
-  ir('tela-gate');
+function renderResults(data) {
+  resultadoIA = data;
+  const isLoc = objetivo === 'locacao';
+  const gatePerfil = document.getElementById('gatePerfilLabel');
+  if (gatePerfil) gatePerfil.textContent = data.perfil_label || 'Seu Perfil';
+  document.getElementById('gateNota').textContent = data.nota || 'Curadoria personalizada pronta';
+  document.getElementById('gatePreview').classList.toggle('locacao', isLoc);
+  document.getElementById('gateTags').innerHTML = [isLoc ? '🔑 Locação' : '🏠 Compra', '📍 ' + userProfile.regiao, ...(data.perfil_tags || [])].map(t => `<span class="gate-tag">${escapeHtml(t)}</span>`).join('');
+  if (data.imoveis && data.imoveis[0]) {
+    document.getElementById('gateImovel1Title').textContent = data.imoveis[0].titulo;
+    document.getElementById('gateImovel1Addr').textContent = '📍 ' + data.imoveis[0].endereco;
+  }
+  show('gate');
 }
-
-function liberar(){
-  const nome=document.getElementById('gnome').value.trim();
-  const whats=document.getElementById('gwhats').value.trim();
-  const ok=document.getElementById('gconsent').checked;
-  if(!nome||!whats){alert('Informe nome e WhatsApp.');return;}
-  if(!ok){alert('Autorize o uso dos dados para continuar.');return;}
-  P.nome=nome;P.whatsapp=whats;
-  fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({system:'Salva lead. Retorne {"ok":true}',userMessage:'salvar',
-      lead:{...P,label:IA?.label||'',consent:true,dt:new Date().toISOString()}})}).catch(()=>{});
-  resultado();
-}
-
-// RESULTADO
-function resultado(){
-  if(!IA?.imoveis){erro();return;}
-  const az=OBJ==='locacao',bgs=['','p','b'],nome=P.nome||'';
-  document.getElementById('rperfil').innerHTML=`<div class="pstrip${az?' az':''}">
-    <div><h3>${E(IA.label||'Seu Perfil')}</h3><p>Olá, ${E(nome)}! Sua curadoria está pronta.</p></div>
-    <div class="ptags">
-      <span class="ptag">${az?'🔑 Locação':'🏠 Compra'}</span>
-      <span class="ptag">📍 ${E(P.regiao)}</span>
-      ${(IA.tags||[]).map(t=>`<span class="ptag">${E(t)}</span>`).join('')}
-    </div>
-  </div>`;
-  document.getElementById('rcount').textContent=`${IA.imoveis.length} imóveis · região: ${P.regiao}`;
-  document.getElementById('rimoveis').innerHTML=IA.imoveis.map((im,i)=>`
-    <div class="imovel up">
-      <div class="itopo">
-        <div class="rank ${bgs[i]}${az?' az':''}">#${im.rank}</div>
-        <div class="imeta"><div class="ititulo">${E(im.titulo)}</div><div class="iend">📍 ${E(im.endereco)}</div></div>
-        <div class="scirc${az?' az':''}"><div class="snum${az?' az':''}">${im.score}</div><div class="slbl">score</div></div>
+function liberarResultados() {
+  const nome = document.getElementById('gateNome').value.trim();
+  const whatsapp = document.getElementById('gateWhatsapp').value.trim();
+  const consent = document.getElementById('gateConsent').checked;
+  if (!nome || !whatsapp) { alert('Por favor, informe seu nome e WhatsApp para ver os resultados.'); return; }
+  if (!consent) { alert('Para continuar, autorize o uso dos seus dados marcando a caixa de consentimento.'); return; }
+  userProfile.nome = nome; userProfile.whatsapp = whatsapp;
+  fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ system:'Só salva o lead, retorne: {"ok": true}', userMessage:'salvar lead', lead:{ objetivo:userProfile.objetivo, regiao:userProfile.regiao, composicao:userProfile.composicao, orcamento:userProfile.orcamento, must_haves:userProfile.must_haves, prioridade:userProfile.prioridade, nome, whatsapp, perfil_label:resultadoIA?.perfil_label || '', consentimento:true, consentimento_data:new Date().toISOString() } }) }).catch(()=>{});
+  const data = resultadoIA;
+  if (!data || !Array.isArray(data.imoveis)) { renderError(); return; }
+  const isLoc = objetivo === 'locacao'; const badges = ['', 'silver', 'bronze'];
+  document.getElementById('profileStrip').innerHTML = `<div class="profile-strip ${isLoc ? 'locacao' : ''}"><div class="profile-strip-left"><h3>${escapeHtml(data.perfil_label || 'Seu Perfil')}</h3><p>Olá, ${escapeHtml(nome)}! Sua curadoria está pronta.</p></div><div class="profile-tags"><span class="profile-tag">${isLoc ? '🔑 Locação' : '🏠 Compra'}</span><span class="profile-tag">📍 ${escapeHtml(userProfile.regiao)}</span>${(data.perfil_tags || []).map(t => `<span class="profile-tag">${escapeHtml(t)}</span>`).join('')}</div></div>`;
+  document.getElementById('resultsCount').textContent = `${data.imoveis.length} imóveis selecionados · região: ${userProfile.regiao}`;
+  document.getElementById('imoveisArea').innerHTML = data.imoveis.map((im, idx) => `
+    <div class="imovel">
+      <div class="imovel-top">
+        <div class="rank-badge ${badges[idx]} ${isLoc ? 'loc' : ''}">#${im.rank}</div>
+        <div class="imovel-meta">
+          <div class="imovel-title">${escapeHtml(im.titulo)}</div>
+          <div class="imovel-addr">📍 ${escapeHtml(im.endereco)}</div>
+        </div>
+        <div class="imovel-score-wrap"><div class="score-circle ${isLoc ? 'loc' : ''}"><div class="score-num ${isLoc ? 'loc' : ''}">${escapeHtml(String(im.score ?? ''))}</div><div class="score-lbl">score</div></div></div>
       </div>
-      <div class="itags">
-        ${(im.tags_match||[]).map(t=>`<span class="itag m">✓ ${E(t)}</span>`).join('')}
-        ${(im.tags_neutro||[]).map(t=>`<span class="itag n">${E(t)}</span>`).join('')}
-        <span class="itag pr">${E(im.preco||'')}</span>
+      <div class="imovel-tags">
+        ${(im.tags_match || []).map(t => `<span class="itag match">✓ ${escapeHtml(t)}</span>`).join('')}
+        ${(im.tags_neutro || []).map(t => `<span class="itag neutral">${escapeHtml(t)}</span>`).join('')}
+        <span class="itag price">${escapeHtml(im.preco || '')}</span>
       </div>
-      <div class="ijust">${im.justificativa||''}</div>
-      <div class="iacoes">
-        <a href="https://www.google.com/search?q=${encodeURIComponent((az?'aluguel':'venda')+' imovel '+norm(P.regiao)+' sao paulo')}" target="_blank" class="bacao p1${az?' az':''}">Buscar no Google →</a>
-        <a href="https://wa.me/5511999999999?text=${encodeURIComponent('Olá! Quero ajuda com: '+im.titulo+' em '+im.endereco)}" target="_blank" class="bacao s1">Falar com especialista</a>
+      <div class="imovel-justif">${im.justificativa || ''}</div>
+      <div class="result-actions">
+        <a href="${montarBuscaGoogle(im)}" target="_blank" rel="noopener noreferrer" class="result-link primary ${isLoc ? 'loc-mode' : ''}">Ver mais opções para este perfil →</a>
+        <a href="${montarWhatsappConsultor(im)}" target="_blank" rel="noopener noreferrer" class="result-link secondary">Quero ajuda com este imóvel</a>
       </div>
     </div>`).join('');
-  ir('tela-resultado');
+  show('results');
 }
-
-function erro(){
-  document.getElementById('rperfil').innerHTML='';
-  document.getElementById('rcount').innerHTML='';
-  document.getElementById('rimoveis').innerHTML=`<div class="card"><p style="color:var(--muted);font-size:14px;text-align:center;line-height:1.6">⚠️ Não foi possível conectar com a IA.<br>Verifique sua conexão.</p><div style="text-align:center;margin-top:1rem"><button class="bliberar" style="width:auto;padding:10px 24px" onclick="buscar()">Tentar novamente</button></div></div>`;
-  ir('tela-resultado');
+function renderError() {
+  document.getElementById('profileStrip').innerHTML = '';
+  document.getElementById('resultsCount').innerHTML = '';
+  document.getElementById('imoveisArea').innerHTML = `<div class="error-card"><p>⚠️ Não foi possível conectar com a IA agora.<br>Verifique sua conexão e tente novamente.</p><button class="btn-retry" onclick="buildProfileAndSearch()">Tentar novamente</button></div>`;
+  show('results');
 }
-
-function ir(id){document.querySelectorAll('.tela').forEach(t=>t.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo({top:0,behavior:'smooth'});}
-function E(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
-
-document.addEventListener('click',e=>{if(!e.target.closest('#rw')){const b=document.getElementById('acb');if(b)b.style.display='none';}});
+function normalizarTextoBusca(text) { return (text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
+function extrairQuartos(texto) { const match = String(texto || '').match(/(\d+)\s*quartos?/i); return match ? match[1] : ''; }
+function detectarTipoBusca(im) {
+  const titulo = normalizarTextoBusca(im?.titulo || '');
+  if (titulo.includes('apartamento')) return 'apartamento';
+  if (titulo.includes('casa')) return 'casa';
+  if (titulo.includes('sobrado')) return 'sobrado';
+  if (titulo.includes('studio')) return 'studio';
+  if (titulo.includes('flat')) return 'flat';
+  return 'imovel';
+}
+function montarBuscaGoogle(im) {
+  const transacao = objetivo === 'locacao' ? 'aluguel' : 'venda';
+  const tipo = detectarTipoBusca(im);
+  const regiao = normalizarTextoBusca(userProfile.regiao || 'sao paulo');
+  const quartos = extrairQuartos((im?.tags_neutro || []).join(' ') + ' ' + (im?.titulo || ''));
+  const termos = [tipo, transacao, regiao, 'sao paulo', quartos ? `${quartos} quartos` : '', 'imovel'].filter(Boolean).join(' ');
+  return `https://www.google.com/search?q=${encodeURIComponent(termos)}`;
+}
+function montarWhatsappConsultor(im) {
+  const telefone = '5511999999999';
+  const msg = `Olá! Vi a curadoria do ImobAI e quero ajuda com este imóvel:%0A%0A${encodeURIComponent(im?.titulo || '')}%0A${encodeURIComponent(im?.endereco || '')}%0APreço: ${encodeURIComponent(im?.preco || '')}%0AObjetivo: ${encodeURIComponent(userProfile.objetivo || '')}%0ARegião: ${encodeURIComponent(userProfile.regiao || '')}`;
+  return `https://wa.me/${telefone}?text=${msg}`;
+}
+function escapeHtml(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('screen-' + id).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 </script>
 </body>
 </html>
