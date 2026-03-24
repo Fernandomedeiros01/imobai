@@ -37,24 +37,21 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   padding: 1.25rem 1rem; border: 2px solid var(--border);
   border-radius: var(--radius); background: var(--card);
   cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all .2s;
 }
-.obj-btn:not(.sel):hover { border-color: var(--accent-mid); background: var(--accent-light); }
-.obj-btn.compra.sel,
-.obj-btn.compra.sel:hover { border-color: var(--accent) !important; background: var(--accent-light) !important; border-width: 3px !important; }
-.obj-btn.locacao.sel,
-.obj-btn.locacao.sel:hover { border-color: var(--blue) !important; background: var(--blue-light) !important; border-width: 3px !important; }
+.obj-btn:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+.obj-btn.compra:hover, .obj-btn.compra.sel { border-color: var(--accent); background: var(--accent-light); }
+.obj-btn.locacao:hover, .obj-btn.locacao.sel { border-color: var(--blue); background: var(--blue-light); }
 .obj-icon { font-size: 28px; }
 .obj-label { font-size: 15px; font-weight: 500; color: var(--text); }
 .obj-sub { font-size: 11px; color: var(--muted); }
-.obj-btn.compra.sel .obj-label,
-.obj-btn.compra.sel:hover .obj-label { color: var(--accent) !important; font-weight: 700 !important; }
-.obj-btn.locacao.sel .obj-label,
-.obj-btn.locacao.sel:hover .obj-label { color: var(--blue) !important; font-weight: 700 !important; }
+.obj-btn.compra.sel .obj-label { color: var(--accent); }
+.obj-btn.locacao.sel .obj-label { color: var(--blue); }
 .hero-stats { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
 .stat { text-align: center; }
 .stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--text); }
 .stat-label { font-size: 11px; color: var(--subtle); margin-top: 2px; }
-.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px 32px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background .2s, transform .15s, opacity .2s; opacity: .4; pointer-events: all; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 16px 32px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: background .2s, transform .15s; opacity: .4; pointer-events: none; }
 .btn-primary.on { opacity: 1; pointer-events: all; }
 .btn-primary.on:hover { background: var(--accent-hover); transform: translateY(-1px); }
 .btn-primary.locacao-mode { background: var(--blue); }
@@ -101,14 +98,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .regiao-chip { font-size: 12px; padding: 5px 12px; border-radius: 99px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: all .15s; }
 .regiao-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 .regiao-chip.loc:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
-.regiao-sugestao { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: transparent; border: none; border-bottom: 1px solid var(--border); text-align: left; font-family: "DM Sans", sans-serif; font-size: 14px; color: var(--text); cursor: pointer; transition: background .15s; }
-.regiao-sugestao:last-child { border-bottom: none; }
-.regiao-sugestao:hover { background: var(--accent-light); }
-.regiao-sugestao.loc:hover { background: var(--blue-light); }
-.regiao-sugestao-icone { font-size: 14px; }
-.regiao-sugestao-texto { flex: 1; }
-.regiao-sugestao-titulo { font-weight: 500; }
-.regiao-sugestao-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .q-nav { display: flex; gap: 8px; margin-top: 1.5rem; }
 .btn-back { padding: 12px 18px; border: 1.5px solid var(--border); border-radius: 10px; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--muted); cursor: pointer; transition: all .15s; }
 .btn-back:hover { border-color: var(--text); color: var(--text); }
@@ -201,44 +190,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .gate-lgpd { font-size: 11px; color: var(--subtle); line-height: 1.6; text-align: center; }
 .gate-lgpd a { color: var(--muted); }
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-
-.regiao-autocomplete { position: relative; }
-
-.regiao-sugestoes {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(28,25,23,.06);
-  z-index: 20;
-  display: none;
-}
-.regiao-sugestao {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 14px;
-  background: var(--card);
-  border: none;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
-  cursor: pointer;
-  transition: background .15s, color .15s;
-}
-.regiao-sugestao:last-child { border-bottom: none; }
-.regiao-sugestao:hover { background: var(--accent-light); }
-.regiao-sugestao.loc:hover { background: var(--blue-light); }
-.regiao-sugestao-icone { flex-shrink: 0; }
-.regiao-sugestao-texto { display: flex; flex-direction: column; gap: 2px; }
-.regiao-sugestao-titulo { font-size: 14px; color: var(--text); }
-.regiao-sugestao-sub { font-size: 12px; color: var(--muted); }
-
-
 </style>
 </head>
 <body>
@@ -248,15 +199,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <h1 class="hero-logo">imob<span>AI</span></h1>
     <p class="hero-sub">O que você está buscando?<br>Cada objetivo tem um questionário feito sob medida.</p>
     <div class="hero-objetivo">
-      <button id="btnCompra" onclick="selecionarObjetivo('compra')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:1.25rem 1rem;border:2px solid #E5E0D8;border-radius:18px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;transition:none;">
-        <span style="font-size:28px">🏠</span>
-        <span style="font-size:15px;font-weight:500;color:#1C1917" id="lblCompra">Comprar</span>
-        <span style="font-size:11px;color:#78716C">Decisão patrimonial</span>
+      <button class="obj-btn compra" id="btnCompra" onclick="selecionarObjetivo('compra')">
+        <span class="obj-icon">🏠</span>
+        <span class="obj-label">Comprar</span>
+        <span class="obj-sub">Decisão patrimonial</span>
       </button>
-      <button id="btnLocacao" onclick="selecionarObjetivo('locacao')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:1.25rem 1rem;border:2px solid #E5E0D8;border-radius:18px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;transition:none;">
-        <span style="font-size:28px">🔑</span>
-        <span style="font-size:15px;font-weight:500;color:#1C1917" id="lblLocacao">Alugar</span>
-        <span style="font-size:11px;color:#78716C">Flexibilidade e experiência</span>
+      <button class="obj-btn locacao" id="btnLocacao" onclick="selecionarObjetivo('locacao')">
+        <span class="obj-icon">🔑</span>
+        <span class="obj-label">Alugar</span>
+        <span class="obj-sub">Flexibilidade e experiência</span>
       </button>
     </div>
     <div class="hero-stats">
@@ -264,7 +215,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <div class="stat"><div class="stat-num">3</div><div class="stat-label">opções curadas</div></div>
       <div class="stat"><div class="stat-num">2min</div><div class="stat-label">tempo médio</div></div>
     </div>
-    <button id="btnIniciar" onclick="startQuiz()" style="display:inline-flex;align-items:center;gap:8px;background:#C2541A;color:#fff;border:none;border-radius:12px;padding:16px 32px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;opacity:.4;pointer-events:none;transition:none;">Começar busca →</button>
+    <button class="btn-primary" id="btnIniciar" onclick="startQuiz()">Começar busca →</button>
   </div>
 </div>
 <div class="screen" id="screen-quiz">
@@ -366,63 +317,17 @@ const Q_LOCACAO = [
 let objetivo = null, Qs = [], cur = 0, ans = [], userProfile = {}, regiaoValue = '', resultadoIA = null;
 function selecionarObjetivo(obj) {
   objetivo = obj;
-
-  const btnC = document.getElementById('btnCompra');
-  const btnL = document.getElementById('btnLocacao');
-  const lblC = document.getElementById('lblCompra');
-  const lblL = document.getElementById('lblLocacao');
-
-  // Reset inline total — sem depender de CSS
-  btnC.style.border = '2px solid #E5E0D8';
-  btnC.style.background = '#fff';
-  lblC.style.color = '#1C1917';
-  lblC.style.fontWeight = '500';
-
-  btnL.style.border = '2px solid #E5E0D8';
-  btnL.style.background = '#fff';
-  lblL.style.color = '#1C1917';
-  lblL.style.fontWeight = '500';
-
-  // Destaca selecionado
-  if (obj === 'compra') {
-    btnC.style.border = '3px solid #C2541A';
-    btnC.style.background = '#FDF0E8';
-    lblC.style.color = '#C2541A';
-    lblC.style.fontWeight = '700';
-  } else {
-    btnL.style.border = '3px solid #1D4ED8';
-    btnL.style.background = '#EFF6FF';
-    lblL.style.color = '#1D4ED8';
-    lblL.style.fontWeight = '700';
-  }
-
-  // Ativa botão iniciar
+  document.getElementById('btnCompra').classList.toggle('sel', obj === 'compra');
+  document.getElementById('btnLocacao').classList.toggle('sel', obj === 'locacao');
   const btn = document.getElementById('btnIniciar');
-  btn.style.opacity = '1';
-  btn.style.pointerEvents = 'all';
-  btn.style.cursor = 'pointer';
-  if (obj === 'locacao') {
-    btn.style.background = '#1D4ED8';
-  } else {
-    btn.style.background = '#C2541A';
-  }
-  btn.onclick = startQuiz;
-
+  btn.classList.add('on');
+  btn.classList.toggle('locacao-mode', obj === 'locacao');
   Qs = obj === 'compra' ? Q_COMPRA : Q_LOCACAO;
   document.getElementById('statPergs').textContent = Qs.length;
 }
 function goHome() { show('hero'); }
 function startQuiz() {
-  if (!objetivo) {
-    document.getElementById('btnCompra').style.animation = 'pulse-border .4s ease';
-    document.getElementById('btnLocacao').style.animation = 'pulse-border .4s ease';
-    setTimeout(() => {
-      document.getElementById('btnCompra').style.animation = '';
-      document.getElementById('btnLocacao').style.animation = '';
-    }, 400);
-    alert('Selecione Comprar ou Alugar para continuar.');
-    return;
-  }
+  if (!objetivo) return;
   cur = 0; ans = Qs.map(() => []); regiaoValue = ''; resultadoIA = null;
   const isLoc = objetivo === 'locacao';
   document.getElementById('logoSpan').className = isLoc ? 'loc' : '';
@@ -441,223 +346,17 @@ function renderQ() {
   let inputHtml = '';
   if (q.type === 'regiao') {
     const chips = (q.sugestoes || []).map(s => `<span class="regiao-chip ${isLoc ? 'loc' : ''}" onclick="preencherRegiao('${s.replace(/'/g, "\\'")}')">${s}</span>`).join('');
-    inputHtml = `
-      <div class="regiao-autocomplete">
-        <div class="regiao-input-wrap">
-          <span class="regiao-icon">📍</span>
-          <input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput" placeholder="Ex: Pinheiros, Vila Mariana, ABC..." value="${escapeHtml(regiaoValue)}" oninput="onRegiaoInput(this.value)" autocomplete="off">
-        </div>
-        <div id="regiaoSugestoes" class="regiao-sugestoes"></div>
-      </div>
-      <div class="regiao-chips">${chips}</div>`;
+    inputHtml = `<div class="regiao-input-wrap"><span class="regiao-icon">📍</span><input class="regiao-input ${isLoc ? 'loc' : ''}" type="text" id="regiaoInput" placeholder="Ex: Pinheiros, Vila Mariana, ABC..." value="${escapeHtml(regiaoValue)}" oninput="onRegiaoInput(this.value)" autocomplete="off"></div><div class="regiao-chips">${chips}</div>`;
   } else {
     const locClass = isLoc ? ' loc-mode' : '';
     inputHtml = `<div class="opts ${q.layout === 'grid' ? 'grid' : ''}">${q.opts.map((o, i) => `<button type="button" class="opt ${sel.includes(o.l) ? 'sel' + locClass : ''}" onclick="pick(${i})"><span class="opt-icon">${o.i}</span><span class="opt-text">${escapeHtml(o.l)}${o.s ? `<div class="opt-sub">${escapeHtml(o.s)}</div>` : ''}</span></button>`).join('')}</div>`;
   }
   const locClass = isLoc ? ' loc' : '';
   document.getElementById('qArea').innerHTML = `<div class="q-card"><div class="q-pilar${locClass}">${escapeHtml(q.pilar)}</div><h2 class="q-title">${escapeHtml(q.title)}</h2><p class="q-hint">${escapeHtml(q.hint)}</p>${q.type === 'multi' ? `<div class="multi-badge">○ Pode escolher mais de uma${q.max ? ` (máx. ${q.max})` : ''}</div>` : ''}${inputHtml}<div class="q-nav">${cur > 0 ? `<button type="button" class="btn-back" onclick="goBack()">←</button>` : ''}<button type="button" class="btn-next ${isLoc ? 'loc-mode' : ''} ${hasAnswer ? 'on' : ''}" id="btnNext" onclick="next()">${cur === Qs.length - 1 ? 'Ver meus imóveis →' : 'Continuar →'}</button></div></div>`;
-  if (q.type === 'regiao') {
-    setTimeout(() => {
-      const input = document.getElementById('regiaoInput');
-      if (input) {
-        input.focus();
-        input.addEventListener('focus', function() {
-          if (regiaoValue.trim()) renderRegiaoAutocomplete();
-        });
-      }
-    }, 100);
-  }
+  if (q.type === 'regiao') setTimeout(() => document.getElementById('regiaoInput')?.focus(), 100);
 }
-function onRegiaoInput(val) {
-  regiaoValue = val;
-  const btn = document.getElementById('btnNext');
-  if (btn) btn.classList.toggle('on', val.trim().length > 0);
-  renderRegiaoAutocomplete();
-}
-function preencherRegiao(val) {
-  regiaoValue = val;
-  const input = document.getElementById('regiaoInput');
-  if (input) input.value = val;
-  const btn = document.getElementById('btnNext');
-  if (btn) btn.classList.add('on');
-  esconderRegiaoAutocomplete();
-}
-const REGIOES_AUTOCOMPLETE = [
-  // Zona Oeste
-  {nome:"Pinheiros",detalhe:"Zona Oeste · SP"},
-  {nome:"Vila Madalena",detalhe:"Zona Oeste · SP"},
-  {nome:"Lapa",detalhe:"Zona Oeste · SP"},
-  {nome:"Alto de Pinheiros",detalhe:"Zona Oeste · SP"},
-  {nome:"Perdizes",detalhe:"Zona Oeste · SP"},
-  {nome:"Sumaré",detalhe:"Zona Oeste · SP"},
-  {nome:"Pompéia",detalhe:"Zona Oeste · SP"},
-  {nome:"Água Branca",detalhe:"Zona Oeste · SP"},
-  {nome:"Butantã",detalhe:"Zona Oeste · SP"},
-  {nome:"Morumbi",detalhe:"Zona Oeste · SP"},
-  {nome:"Jardim América",detalhe:"Zona Oeste · SP"},
-  {nome:"Jardim Europa",detalhe:"Zona Oeste · SP"},
-  {nome:"Jardim Paulistano",detalhe:"Zona Oeste · SP"},
-  {nome:"Jardim Paulista",detalhe:"Zona Oeste · SP"},
-  {nome:"Cerqueira César",detalhe:"Zona Oeste · SP"},
-  {nome:"Itaim Bibi",detalhe:"Zona Oeste · SP"},
-  // Zona Sul
-  {nome:"Vila Mariana",detalhe:"Zona Sul · SP"},
-  {nome:"Moema",detalhe:"Zona Sul · SP"},
-  {nome:"Brooklin",detalhe:"Zona Sul · SP"},
-  {nome:"Campo Belo",detalhe:"Zona Sul · SP"},
-  {nome:"Santo Amaro",detalhe:"Zona Sul · SP"},
-  {nome:"Jabaquara",detalhe:"Zona Sul · SP"},
-  {nome:"Saúde",detalhe:"Zona Sul · SP"},
-  {nome:"Ipiranga",detalhe:"Zona Sul · SP"},
-  {nome:"Vila Prudente",detalhe:"Zona Sul · SP"},
-  {nome:"Cursino",detalhe:"Zona Sul · SP"},
-  {nome:"Mirandópolis",detalhe:"Zona Sul · SP"},
-  {nome:"Aclimação",detalhe:"Zona Sul · SP"},
-  {nome:"Paraíso",detalhe:"Zona Sul · SP"},
-  {nome:"Liberdade",detalhe:"Zona Sul · SP"},
-  {nome:"Bela Vista",detalhe:"Zona Sul · SP"},
-  {nome:"Chácara Klabin",detalhe:"Zona Sul · SP"},
-  {nome:"Vila Olímpia",detalhe:"Zona Sul · SP"},
-  {nome:"Planalto Paulista",detalhe:"Zona Sul · SP"},
-  {nome:"Campo Grande",detalhe:"Zona Sul · SP"},
-  {nome:"Interlagos",detalhe:"Zona Sul · SP"},
-  {nome:"Socorro",detalhe:"Zona Sul · SP"},
-  {nome:"Pedreira",detalhe:"Zona Sul · SP"},
-  {nome:"Cidade Dutra",detalhe:"Zona Sul · SP"},
-  // Zona Norte
-  {nome:"Santana",detalhe:"Zona Norte · SP"},
-  {nome:"Tucuruvi",detalhe:"Zona Norte · SP"},
-  {nome:"Mandaqui",detalhe:"Zona Norte · SP"},
-  {nome:"Vila Guilherme",detalhe:"Zona Norte · SP"},
-  {nome:"Vila Maria",detalhe:"Zona Norte · SP"},
-  {nome:"Casa Verde",detalhe:"Zona Norte · SP"},
-  {nome:"Limão",detalhe:"Zona Norte · SP"},
-  {nome:"Tremembé",detalhe:"Zona Norte · SP"},
-  {nome:"Jaçanã",detalhe:"Zona Norte · SP"},
-  {nome:"Jaraguá",detalhe:"Zona Norte · SP"},
-  {nome:"Perus",detalhe:"Zona Norte · SP"},
-  {nome:"Pirituba",detalhe:"Zona Norte · SP"},
-  // Zona Leste
-  {nome:"Tatuapé",detalhe:"Zona Leste · SP"},
-  {nome:"Mooca",detalhe:"Zona Leste · SP"},
-  {nome:"Belém",detalhe:"Zona Leste · SP"},
-  {nome:"Brás",detalhe:"Zona Leste · SP"},
-  {nome:"Pari",detalhe:"Zona Leste · SP"},
-  {nome:"Carrão",detalhe:"Zona Leste · SP"},
-  {nome:"Vila Formosa",detalhe:"Zona Leste · SP"},
-  {nome:"Penha",detalhe:"Zona Leste · SP"},
-  {nome:"Vila Matilde",detalhe:"Zona Leste · SP"},
-  {nome:"Aricanduva",detalhe:"Zona Leste · SP"},
-  {nome:"Vila Prudente",detalhe:"Zona Leste · SP"},
-  {nome:"São Mateus",detalhe:"Zona Leste · SP"},
-  {nome:"Itaquera",detalhe:"Zona Leste · SP"},
-  {nome:"Guaianases",detalhe:"Zona Leste · SP"},
-  {nome:"Cidade Tiradentes",detalhe:"Zona Leste · SP"},
-  {nome:"Ermelino Matarazzo",detalhe:"Zona Leste · SP"},
-  {nome:"São Miguel Paulista",detalhe:"Zona Leste · SP"},
-  {nome:"Itaim Paulista",detalhe:"Zona Leste · SP"},
-  {nome:"Vila Curuçá",detalhe:"Zona Leste · SP"},
-  // Centro
-  {nome:"Centro",detalhe:"Centro · SP"},
-  {nome:"República",detalhe:"Centro · SP"},
-  {nome:"Consolação",detalhe:"Centro · SP"},
-  {nome:"Santa Cecília",detalhe:"Centro · SP"},
-  {nome:"Higienópolis",detalhe:"Centro · SP"},
-  {nome:"Campos Elíseos",detalhe:"Centro · SP"},
-  {nome:"Bom Retiro",detalhe:"Centro · SP"},
-  {nome:"Luz",detalhe:"Centro · SP"},
-  {nome:"Sé",detalhe:"Centro · SP"},
-  // Grande SP
-  {nome:"Santo André",detalhe:"Grande SP · ABC"},
-  {nome:"São Bernardo do Campo",detalhe:"Grande SP · ABC"},
-  {nome:"São Caetano do Sul",detalhe:"Grande SP · ABC"},
-  {nome:"Diadema",detalhe:"Grande SP · ABC"},
-  {nome:"Mauá",detalhe:"Grande SP · ABC"},
-  {nome:"Guarulhos",detalhe:"Grande SP"},
-  {nome:"Osasco",detalhe:"Grande SP"},
-  {nome:"Barueri",detalhe:"Grande SP"},
-  {nome:"Santana de Parnaíba",detalhe:"Grande SP"},
-  {nome:"Alphaville",detalhe:"Barueri · Grande SP"},
-  {nome:"Cotia",detalhe:"Grande SP"},
-  {nome:"Embu das Artes",detalhe:"Grande SP"},
-  {nome:"Taboão da Serra",detalhe:"Grande SP"},
-  {nome:"Mogi das Cruzes",detalhe:"Grande SP"},
-  {nome:"Suzano",detalhe:"Grande SP"},
-  // Interior SP
-  {nome:"Campinas",detalhe:"Interior · SP"},
-  {nome:"Sorocaba",detalhe:"Interior · SP"},
-  {nome:"São José dos Campos",detalhe:"Interior · SP"},
-  {nome:"Ribeirão Preto",detalhe:"Interior · SP"},
-  {nome:"Santos",detalhe:"Litoral · SP"},
-  {nome:"São Vicente",detalhe:"Litoral · SP"},
-  {nome:"Guarujá",detalhe:"Litoral · SP"},
-  {nome:"Praia Grande",detalhe:"Litoral · SP"},
-  // Vilas populares
-  {nome:"Vila Andrade",detalhe:"Zona Sul · SP"},
-  {nome:"Vila Sônia",detalhe:"Zona Oeste · SP"},
-  {nome:"Vila Leopoldina",detalhe:"Zona Oeste · SP"},
-  {nome:"Vila Romana",detalhe:"Zona Oeste · SP"},
-  {nome:"Vila Hamburguesa",detalhe:"Zona Oeste · SP"},
-  {nome:"Vila Clementino",detalhe:"Zona Sul · SP"},
-  {nome:"Vila Santa Catarina",detalhe:"Zona Sul · SP"},
-  {nome:"Vila Mascote",detalhe:"Zona Sul · SP"},
-  {nome:"Vila Congonhas",detalhe:"Zona Sul · SP"},
-  {nome:"Vila Gomes Cardim",detalhe:"Zona Leste · SP"},
-  {nome:"Vila Carrão",detalhe:"Zona Leste · SP"},
-  {nome:"Vila Esperança",detalhe:"Zona Leste · SP"},
-  {nome:"Vila Natal",detalhe:"Zona Leste · SP"},
-  {nome:"Vila Guilherme",detalhe:"Zona Norte · SP"},
-  {nome:"Vila Medeiros",detalhe:"Zona Norte · SP"},
-  {nome:"Vila Gustavo",detalhe:"Zona Norte · SP"},
-  {nome:"Vila Nova Cachoeirinha",detalhe:"Zona Norte · SP"},
-];
-
-function normalizarBuscaRegiao(text) {
-  return String(text || '')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .trim();
-}
-function obterSugestoesRegiao(termo) {
-  const busca = normalizarBuscaRegiao(termo);
-  if (!busca) return [];
-  return REGIOES_AUTOCOMPLETE.filter(item => {
-    const nome = normalizarBuscaRegiao(item.nome);
-    const detalhe = normalizarBuscaRegiao(item.detalhe);
-    return nome.includes(busca) || detalhe.includes(busca);
-  }).slice(0, 5);
-}
-function renderRegiaoAutocomplete() {
-  const box = document.getElementById('regiaoSugestoes');
-  if (!box) return;
-
-  const sugestoes = obterSugestoesRegiao(regiaoValue);
-  if (!regiaoValue.trim() || sugestoes.length === 0) {
-    box.innerHTML = '';
-    box.style.display = 'none';
-    return;
-  }
-
-  const isLoc = objetivo === 'locacao';
-  box.innerHTML = sugestoes.map(item => `
-    <button type="button" class="regiao-sugestao ${isLoc ? 'loc' : ''}" onclick="preencherRegiao('${item.nome.replace(/'/g, "\'")}')">
-      <span class="regiao-sugestao-icone">📍</span>
-      <span class="regiao-sugestao-texto">
-        <span class="regiao-sugestao-titulo">${item.nome}</span>
-        <div class="regiao-sugestao-sub">${item.detalhe}</div>
-      </span>
-    </button>
-  `).join('');
-  box.style.display = 'block';
-}
-function esconderRegiaoAutocomplete() {
-  const box = document.getElementById('regiaoSugestoes');
-  if (!box) return;
-  setTimeout(() => {
-    box.style.display = 'none';
-  }, 120);
-}
+function onRegiaoInput(val) { regiaoValue = val; const btn = document.getElementById('btnNext'); if (btn) btn.classList.toggle('on', val.trim().length > 0); }
+function preencherRegiao(val) { regiaoValue = val; const input = document.getElementById('regiaoInput'); if (input) input.value = val; const btn = document.getElementById('btnNext'); if (btn) btn.classList.add('on'); }
 function pick(i) {
   const q = Qs[cur], label = q.opts[i].l;
   if (q.type === 'single') ans[cur] = [label]; else {
@@ -801,4 +500,7 @@ function montarWhatsappConsultor(im) {
   return `https://wa.me/${telefone}?text=${msg}`;
 }
 function escapeHtml(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
-f
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('screen-' + id).classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+</script>
+</body>
+</html>
